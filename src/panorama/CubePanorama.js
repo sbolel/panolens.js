@@ -1,68 +1,68 @@
 (function(){
-	
-	'use strict';
-	
-	/**
-	 * Cubemap-based panorama
-	 * @constructor
-	 * @param {array} images - An array of cubetexture containing six images
-	 * @param {number} [edgeLength=10000] - The length of cube's edge
-	 */
-	PANOLENS.CubePanorama = function ( images, edgeLength ){
 
-		var shader, geometry, material;
+  'use strict';
 
-		this.images = images || [];
-		this.orbitRadius = edgeLength / 2;
+  /**
+   * Cubemap-based panorama
+   * @constructor
+   * @param {array} images - An array of cubetexture containing six images
+   * @param {number} [edgeLength=10000] - The length of cube's edge
+   */
+  PANOLENS.CubePanorama = function ( images, edgeLength ){
 
-		edgeLength = edgeLength || 10000;
-		shader = JSON.parse( JSON.stringify( THREE.ShaderLib[ 'cube' ] ) );
+    var shader, geometry, material;
 
-		geometry = new THREE.BoxGeometry( edgeLength, edgeLength, edgeLength );
-		material = new THREE.ShaderMaterial( {
+    this.images = images || [];
+    this.orbitRadius = edgeLength / 2;
 
-			fragmentShader: shader.fragmentShader,
-			vertexShader: shader.vertexShader,
-			uniforms: shader.uniforms,
-			side: THREE.BackSide
+    edgeLength = edgeLength || 10000;
+    shader = JSON.parse( JSON.stringify( THREE.ShaderLib[ 'cube' ] ) );
 
-		} );
+    geometry = new THREE.BoxGeometry( edgeLength, edgeLength, edgeLength );
+    material = new THREE.ShaderMaterial( {
 
-		PANOLENS.Panorama.call( this, geometry, material );
+      fragmentShader: shader.fragmentShader,
+      vertexShader: shader.vertexShader,
+      uniforms: shader.uniforms,
+      side: THREE.BackSide
 
-	}
+    } );
 
-	PANOLENS.CubePanorama.prototype = Object.create( PANOLENS.Panorama.prototype );
+    PANOLENS.Panorama.call( this, geometry, material );
 
-	PANOLENS.CubePanorama.prototype.constructor = PANOLENS.CubePanorama;
+  }
 
-	/**
-	 * Load 6 images and bind listeners
-	 */
-	PANOLENS.CubePanorama.prototype.load = function () {
+  PANOLENS.CubePanorama.prototype = Object.create( PANOLENS.Panorama.prototype );
 
-		PANOLENS.Utils.CubeTextureLoader.load( 	
+  PANOLENS.CubePanorama.prototype.constructor = PANOLENS.CubePanorama;
 
-			this.images, 
+  /**
+   * Load 6 images and bind listeners
+   */
+  PANOLENS.CubePanorama.prototype.load = function () {
 
-			this.onLoad.bind( this ), 
-			this.onProgress.bind( this ), 
-			this.onError.bind( this ) 
+    PANOLENS.Utils.CubeTextureLoader.load(
 
-		);
+      this.images,
 
-	};
+      this.onLoad.bind( this ),
+      this.onProgress.bind( this ),
+      this.onError.bind( this )
 
-	/**
-	 * This will be called when 6 textures are ready
-	 * @param  {THREE.CubeTexture} texture - Cube texture
-	 */
-	PANOLENS.CubePanorama.prototype.onLoad = function ( texture ) {
-		
-		this.material.uniforms[ 'tCube' ].value = texture;
+    );
 
-		PANOLENS.Panorama.prototype.onLoad.call( this );
+  };
 
-	};
+  /**
+   * This will be called when 6 textures are ready
+   * @param  {THREE.CubeTexture} texture - Cube texture
+   */
+  PANOLENS.CubePanorama.prototype.onLoad = function ( texture ) {
+
+    this.material.uniforms[ 'tCube' ].value = texture;
+
+    PANOLENS.Panorama.prototype.onLoad.call( this );
+
+  };
 
 })();

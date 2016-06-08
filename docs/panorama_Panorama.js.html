@@ -84,374 +84,374 @@
         <pre
             class="sunlight-highlight-javascript ">( function () {
 
-	'use strict';
+  'use strict';
 
-	/**
-	 * Skeleton panorama derived from THREE.Mesh
-	 * @constructor
-	 * @param {THREE.Geometry} geometry - The geometry for this panorama
-	 * @param {THREE.Material} material - The material for this panorama
-	 */
-	PANOLENS.Panorama = function ( geometry, material ) {
+  /**
+   * Skeleton panorama derived from THREE.Mesh
+   * @constructor
+   * @param {THREE.Geometry} geometry - The geometry for this panorama
+   * @param {THREE.Material} material - The material for this panorama
+   */
+  PANOLENS.Panorama = function ( geometry, material ) {
 
-		THREE.Mesh.call( this );
+    THREE.Mesh.call( this );
 
-		this.type = 'panorama';
+    this.type = 'panorama';
 
-		this.ImageQualityLow = 1;
-		this.ImageQualityFair = 2;
-		this.ImageQualityMedium = 3;
-		this.ImageQualityHigh = 4;
-		this.ImageQualitySuperHigh = 5;
+    this.ImageQualityLow = 1;
+    this.ImageQualityFair = 2;
+    this.ImageQualityMedium = 3;
+    this.ImageQualityHigh = 4;
+    this.ImageQualitySuperHigh = 5;
 
-		this.animationDuration = 500;
+    this.animationDuration = 500;
 
-		this.defaultInfospotSize = 350;
+    this.defaultInfospotSize = 350;
 
-		this.container = undefined;
+    this.container = undefined;
 
-		this.loaded = false;
+    this.loaded = false;
 
-		this.linkedSpots = [];
+    this.linkedSpots = [];
 
-		this.isInfospotVisible = false;
-		
-		this.linkingImageURL = undefined;
-		this.linkingImageScale = undefined;
+    this.isInfospotVisible = false;
 
-		this.geometry = geometry;
+    this.linkingImageURL = undefined;
+    this.linkingImageScale = undefined;
 
-		this.material = material;
-		this.material.side = THREE.DoubleSide;
-		this.material.visible = false;
+    this.geometry = geometry;
 
-		this.scale.x *= -1;
+    this.material = material;
+    this.material.side = THREE.DoubleSide;
+    this.material.visible = false;
 
-		this.orbitRadius = ( geometry.parameter &amp;&amp; geometry.parameter.radius ) 
-			? geometry.parameter.radius
-			: 100;
+    this.scale.x *= -1;
 
-		this.infospotAnimation = new TWEEN.Tween( this ).to( {}, this.animationDuration );
+    this.orbitRadius = ( geometry.parameter &amp;&amp; geometry.parameter.radius )
+      ? geometry.parameter.radius
+      : 100;
 
-		this.addEventListener( 'load', this.fadeIn.bind( this ) );
-		this.addEventListener( 'panolens-container', this.setContainer.bind( this ) );
-		this.addEventListener( 'click', this.onClick.bind( this ) );
+    this.infospotAnimation = new TWEEN.Tween( this ).to( {}, this.animationDuration );
 
-	}
+    this.addEventListener( 'load', this.fadeIn.bind( this ) );
+    this.addEventListener( 'panolens-container', this.setContainer.bind( this ) );
+    this.addEventListener( 'click', this.onClick.bind( this ) );
 
-	PANOLENS.Panorama.prototype = Object.create( THREE.Mesh.prototype );
+  }
 
-	PANOLENS.Panorama.prototype.constructor = PANOLENS.Panorama;
+  PANOLENS.Panorama.prototype = Object.create( THREE.Mesh.prototype );
 
-	/**
-	 * Adding an object
-	 * To counter the scale.x = -1, it will automatically add an 
-	 * empty object with inverted scale on x
-	 * @param {THREE.Object3D} object - The object to be added
-	 */
-	PANOLENS.Panorama.prototype.add = function ( object ) {
+  PANOLENS.Panorama.prototype.constructor = PANOLENS.Panorama;
 
-		var invertedObject;
+  /**
+   * Adding an object
+   * To counter the scale.x = -1, it will automatically add an
+   * empty object with inverted scale on x
+   * @param {THREE.Object3D} object - The object to be added
+   */
+  PANOLENS.Panorama.prototype.add = function ( object ) {
 
-		if ( arguments.length > 1 ) {
+    var invertedObject;
 
-			for ( var i = 0; i &lt; arguments.length; i ++ ) {
+    if ( arguments.length > 1 ) {
 
-				this.add( arguments[ i ] );
+      for ( var i = 0; i &lt; arguments.length; i ++ ) {
 
-			}
+        this.add( arguments[ i ] );
 
-			return this;
+      }
 
-		}
+      return this;
 
-		// In case of infospots
-		if ( object instanceof PANOLENS.Infospot ) {
+    }
 
-			invertedObject = object;
+    // In case of infospots
+    if ( object instanceof PANOLENS.Infospot ) {
 
-			if ( object.dispatchEvent &amp;&amp; this.container ) {
+      invertedObject = object;
 
-				object.dispatchEvent( { type: 'panolens-container', container: this.container } );
+      if ( object.dispatchEvent &amp;&amp; this.container ) {
 
-			}
+        object.dispatchEvent( { type: 'panolens-container', container: this.container } );
 
-		} else {
+      }
 
-			// Counter scale.x = -1 effect
-			invertedObject = new THREE.Object3D();
-			invertedObject.scale.x = -1;
-			invertedObject.add( object );
+    } else {
 
-		}
+      // Counter scale.x = -1 effect
+      invertedObject = new THREE.Object3D();
+      invertedObject.scale.x = -1;
+      invertedObject.add( object );
 
-		THREE.Object3D.prototype.add.call( this, invertedObject );
+    }
 
-	};
+    THREE.Object3D.prototype.add.call( this, invertedObject );
 
-	PANOLENS.Panorama.prototype.load = function () {
+  };
 
-		this.onLoad();
-		
-	};
+  PANOLENS.Panorama.prototype.load = function () {
 
-	/**
-	 * Click event handler
-	 * @param  {object} event - Click event
-	 * @fires PANOLENS.Infospot#dismiss
-	 */
-	PANOLENS.Panorama.prototype.onClick = function ( event ) {
+    this.onLoad();
 
-		if ( event.intersects &amp;&amp; event.intersects.length === 0 ) {
+  };
 
-			this.traverse( function ( object ) {
+  /**
+   * Click event handler
+   * @param  {object} event - Click event
+   * @fires PANOLENS.Infospot#dismiss
+   */
+  PANOLENS.Panorama.prototype.onClick = function ( event ) {
 
-				/**
-				 * Dimiss event
-				 * @type {object}
-				 * @event PANOLENS.Infospot#dismiss
-				 */
-				object.dispatchEvent( { type: 'dismiss' } );
+    if ( event.intersects &amp;&amp; event.intersects.length === 0 ) {
 
-			} );
+      this.traverse( function ( object ) {
 
-		}
+        /**
+         * Dimiss event
+         * @type {object}
+         * @event PANOLENS.Infospot#dismiss
+         */
+        object.dispatchEvent( { type: 'dismiss' } );
 
-	};
+      } );
 
-	/**
-	 * Set container of this panorama 
-	 * @param {HTMLElement|object} data - Data with container information
-	 * @fires PANOLENS.Infospot#panolens-container
-	 */
-	PANOLENS.Panorama.prototype.setContainer = function ( data ) {
+    }
 
-		var container;
+  };
 
-		if ( data instanceof HTMLElement ) {
+  /**
+   * Set container of this panorama
+   * @param {HTMLElement|object} data - Data with container information
+   * @fires PANOLENS.Infospot#panolens-container
+   */
+  PANOLENS.Panorama.prototype.setContainer = function ( data ) {
 
-			container = data;
+    var container;
 
-		} else if ( data &amp;&amp; data.container ) {
+    if ( data instanceof HTMLElement ) {
 
-			container = data.container;
+      container = data;
 
-		}
+    } else if ( data &amp;&amp; data.container ) {
 
-		if ( container ) {
+      container = data.container;
 
-			this.children.forEach( function ( child ) {
+    }
 
-				if ( child instanceof PANOLENS.Infospot &amp;&amp; child.dispatchEvent ) {
+    if ( container ) {
 
-					/**
-					 * Set container event
-					 * @type {object}
-					 * @event PANOLENS.Infospot#panolens-container
-					 * @property {HTMLElement} container - The container of this panorama
-					 */
-					child.dispatchEvent( { type: 'panolens-container', container: container } );
+      this.children.forEach( function ( child ) {
 
-				}
+        if ( child instanceof PANOLENS.Infospot &amp;&amp; child.dispatchEvent ) {
 
-			} );
+          /**
+           * Set container event
+           * @type {object}
+           * @event PANOLENS.Infospot#panolens-container
+           * @property {HTMLElement} container - The container of this panorama
+           */
+          child.dispatchEvent( { type: 'panolens-container', container: container } );
 
-			this.container = container;
+        }
 
-		}
-		
+      } );
 
-	};
+      this.container = container;
 
-	/**
-	 * This will be called when panorama is loaded
-	 * @fires PANOLENS.Panorama#load
-	 */
-	PANOLENS.Panorama.prototype.onLoad = function () {
+    }
 
-		this.loaded = true;
 
-		/**
-		 * Load panorama event
-		 * @type {object}
-		 * @event PANOLENS.Panorama#load
-		 */
-		this.dispatchEvent( { type: 'load' } );
+  };
 
-	};
+  /**
+   * This will be called when panorama is loaded
+   * @fires PANOLENS.Panorama#load
+   */
+  PANOLENS.Panorama.prototype.onLoad = function () {
 
-	/**
-	 * This will be called when panorama is in progress
-	 * @fires PANOLENS.Panorama#progress
-	 */
-	PANOLENS.Panorama.prototype.onProgress = function ( progress ) {
+    this.loaded = true;
 
-		/**
-		 * Loading panorama progress event
-		 * @type {object}
-		 * @event PANOLENS.Panorama#progress
-	 	 * @property {object} progress - The progress object containing loaded and total amount
-		 */
-		this.dispatchEvent( { type: 'progress', progress: progress } );
+    /**
+     * Load panorama event
+     * @type {object}
+     * @event PANOLENS.Panorama#load
+     */
+    this.dispatchEvent( { type: 'load' } );
 
-	};
+  };
 
-	/**
-	 * This will be called when panorama loading has error
-	 * @fires PANOLENS.Panorama#error
-	 */
-	PANOLENS.Panorama.prototype.onError = function () {
+  /**
+   * This will be called when panorama is in progress
+   * @fires PANOLENS.Panorama#progress
+   */
+  PANOLENS.Panorama.prototype.onProgress = function ( progress ) {
 
-		/**
-		 * Loading panorama error event
-		 * @type {object}
-		 * @event PANOLENS.Panorama#error
-		 */
-		this.dispatchEvent( { type: 'error' } );
+    /**
+     * Loading panorama progress event
+     * @type {object}
+     * @event PANOLENS.Panorama#progress
+      * @property {object} progress - The progress object containing loaded and total amount
+     */
+    this.dispatchEvent( { type: 'progress', progress: progress } );
 
-	};
+  };
 
-	/**
-	 * Get zoom level based on window width
-	 * @return {number} zoom level indicating image quality
-	 */
-	PANOLENS.Panorama.prototype.getZoomLevel = function () {
+  /**
+   * This will be called when panorama loading has error
+   * @fires PANOLENS.Panorama#error
+   */
+  PANOLENS.Panorama.prototype.onError = function () {
 
-		var zoomLevel;
+    /**
+     * Loading panorama error event
+     * @type {object}
+     * @event PANOLENS.Panorama#error
+     */
+    this.dispatchEvent( { type: 'error' } );
 
-		if ( window.innerWidth &lt;= 800 ) {
+  };
 
-			zoomLevel = this.ImageQualityFair;
+  /**
+   * Get zoom level based on window width
+   * @return {number} zoom level indicating image quality
+   */
+  PANOLENS.Panorama.prototype.getZoomLevel = function () {
 
-		} else if ( window.innerWidth > 800 &amp;&amp;  window.innerWidth &lt;= 1280 ) {
+    var zoomLevel;
 
-			zoomLevel = this.ImageQualityMedium;
+    if ( window.innerWidth &lt;= 800 ) {
 
-		} else if ( window.innerWidth > 1280 &amp;&amp; window.innerWidth &lt;= 1920 ) {
+      zoomLevel = this.ImageQualityFair;
 
-			zoomLevel = this.ImageQualityHigh;
+    } else if ( window.innerWidth > 800 &amp;&amp;  window.innerWidth &lt;= 1280 ) {
 
-		} else if ( window.innerWidth > 1920 ) {
+      zoomLevel = this.ImageQualityMedium;
 
-			zoomLevel = this.ImageQualitySuperHigh;
+    } else if ( window.innerWidth > 1280 &amp;&amp; window.innerWidth &lt;= 1920 ) {
 
-		} else {
+      zoomLevel = this.ImageQualityHigh;
 
-			zoomLevel = this.ImageQualityLow;
+    } else if ( window.innerWidth > 1920 ) {
 
-		}
+      zoomLevel = this.ImageQualitySuperHigh;
 
-		return zoomLevel;
+    } else {
 
-	};
+      zoomLevel = this.ImageQualityLow;
 
-	/**
-	 * Update texture of a panorama
-	 * @param {THREE.Texture} texture - Texture to be updated
-	 */
-	PANOLENS.Panorama.prototype.updateTexture = function ( texture ) {
+    }
 
-		this.material.map = texture;
+    return zoomLevel;
 
-		this.material.needsUpdate = true;
+  };
 
-	};
+  /**
+   * Update texture of a panorama
+   * @param {THREE.Texture} texture - Texture to be updated
+   */
+  PANOLENS.Panorama.prototype.updateTexture = function ( texture ) {
 
-	/**
-	 * Toggle visibility of infospots in this panorama
-	 * @param  {boolean} isVisible - Visibility of infospots
-	 * @param  {number} delay - Delay in milliseconds to change visibility
-	 * @fires PANOLENS.Panorama#infospot-animation-complete
-	 */
-	PANOLENS.Panorama.prototype.toggleInfospotVisibility = function ( isVisible, delay ) {
+    this.material.map = texture;
 
-		delay = ( delay !== undefined ) ? delay : 0;
+    this.material.needsUpdate = true;
 
-		var scope, visible;
+  };
 
-		scope = this;
-		visible = ( isVisible !== undefined ) ? isVisible : ( this.isInfospotVisible ? false : true );
+  /**
+   * Toggle visibility of infospots in this panorama
+   * @param  {boolean} isVisible - Visibility of infospots
+   * @param  {number} delay - Delay in milliseconds to change visibility
+   * @fires PANOLENS.Panorama#infospot-animation-complete
+   */
+  PANOLENS.Panorama.prototype.toggleInfospotVisibility = function ( isVisible, delay ) {
 
-		this.traverse( function ( object ) {
+    delay = ( delay !== undefined ) ? delay : 0;
 
-			if ( object instanceof PANOLENS.Infospot ) {
+    var scope, visible;
 
-				visible ? object.show( delay ) : object.hide( delay );
+    scope = this;
+    visible = ( isVisible !== undefined ) ? isVisible : ( this.isInfospotVisible ? false : true );
 
-			}
+    this.traverse( function ( object ) {
 
-		} );
+      if ( object instanceof PANOLENS.Infospot ) {
 
-		this.isInfospotVisible = visible;
+        visible ? object.show( delay ) : object.hide( delay );
 
-		// Animation complete event
-		this.infospotAnimation.onComplete( function () {
+      }
 
-			/**
-			 * Complete toggling infospot visibility
-			 * @event PANOLENS.Panorama#infospot-animation-complete
-			 * @type {object} 
-			 */
-			scope.dispatchEvent( { type : 'infospot-animation-complete', visible: visible } );
+    } );
 
-		} ).delay( delay ).start();
+    this.isInfospotVisible = visible;
 
-	};
+    // Animation complete event
+    this.infospotAnimation.onComplete( function () {
 
-	/**
-	 * Set image of this panorama's linking infospot
-	 * @param {string} url   - Url to the image asset
-	 * @param {number} scale - Scale factor of the infospot
-	 */
-	PANOLENS.Panorama.prototype.setLinkingImage = function ( url, scale ) {
+      /**
+       * Complete toggling infospot visibility
+       * @event PANOLENS.Panorama#infospot-animation-complete
+       * @type {object}
+       */
+      scope.dispatchEvent( { type : 'infospot-animation-complete', visible: visible } );
 
-		this.linkingImageURL = url;
-		this.linkingImageScale = scale;
+    } ).delay( delay ).start();
 
-	};
+  };
 
-	/**
-	 * Link two panorama bidirectionally by attaching infospot on each other
-	 * @param  {PANOLENS.Panorama} pano  - The panorama to be linked to
-	 * @param  {boolean} ended - If this linking is the second / last iteration
-	 */
-	PANOLENS.Panorama.prototype.link = function ( pano, ended ) {
+  /**
+   * Set image of this panorama's linking infospot
+   * @param {string} url   - Url to the image asset
+   * @param {number} scale - Scale factor of the infospot
+   */
+  PANOLENS.Panorama.prototype.setLinkingImage = function ( url, scale ) {
 
-		var scope = this, spot, raycaster, intersect, point;
+    this.linkingImageURL = url;
+    this.linkingImageScale = scale;
 
-		this.visible = true;
+  };
 
-		raycaster = new THREE.Raycaster();
-		raycaster.set( this.position, pano.position.clone().sub( this.position ).normalize() );
-		intersect = raycaster.intersectObject( this );
+  /**
+   * Link two panorama bidirectionally by attaching infospot on each other
+   * @param  {PANOLENS.Panorama} pano  - The panorama to be linked to
+   * @param  {boolean} ended - If this linking is the second / last iteration
+   */
+  PANOLENS.Panorama.prototype.link = function ( pano, ended ) {
 
-		if ( intersect.length > 0 ) {
+    var scope = this, spot, raycaster, intersect, point;
 
-			point = intersect[ intersect.length - 1 ].point.clone().multiplyScalar( 0.99 );
+    this.visible = true;
 
-		} else {
+    raycaster = new THREE.Raycaster();
+    raycaster.set( this.position, pano.position.clone().sub( this.position ).normalize() );
+    intersect = raycaster.intersectObject( this );
 
-			console.warn( 'Panoramas should be at different position' );
-			return;
+    if ( intersect.length > 0 ) {
 
-		}
+      point = intersect[ intersect.length - 1 ].point.clone().multiplyScalar( 0.99 );
 
-		spot = new PANOLENS.Infospot( 
-			pano.linkingImageScale !== undefined ? pano.linkingImageScale : this.defaultInfospotSize, 
-			pano.linkingImageURL !== undefined ? pano.linkingImageURL : PANOLENS.DataImage.Arrow 
-		);
+    } else {
+
+      console.warn( 'Panoramas should be at different position' );
+      return;
+
+    }
+
+    spot = new PANOLENS.Infospot(
+      pano.linkingImageScale !== undefined ? pano.linkingImageScale : this.defaultInfospotSize,
+      pano.linkingImageURL !== undefined ? pano.linkingImageURL : PANOLENS.DataImage.Arrow
+    );
         spot.position.copy( point );
         spot.toPanorama = pano;
         spot.addEventListener( 'click', function () {
 
-        	/**
-        	 * Viewer handler event
-        	 * @type {object}
-        	 * @event PANOLENS.Panorama#panolens-viewer-handler
-        	 * @property {string} method - Viewer function name
-        	 * @property {*} data - The argument to be passed into the method
-        	 */
-        	scope.dispatchEvent( { type : 'panolens-viewer-handler', method: 'setPanorama', data: pano } );
+          /**
+           * Viewer handler event
+           * @type {object}
+           * @event PANOLENS.Panorama#panolens-viewer-handler
+           * @property {string} method - Viewer function name
+           * @property {*} data - The argument to be passed into the method
+           */
+          scope.dispatchEvent( { type : 'panolens-viewer-handler', method: 'setPanorama', data: pano } );
 
         } );
 
@@ -463,165 +463,165 @@
 
         if ( !ended ) {
 
-        	pano.link( this, true );
+          pano.link( this, true );
 
         }
 
-	};
+  };
 
-	PANOLENS.Panorama.prototype.reset = function () {
+  PANOLENS.Panorama.prototype.reset = function () {
 
-		this.children.length = 0;	
+    this.children.length = 0;
 
-	};
+  };
 
-	/**
-	 * Start fading in animation
-	 * @fires PANOLENS.Panorama#enter-complete
-	 */
-	PANOLENS.Panorama.prototype.fadeIn = function () {
+  /**
+   * Start fading in animation
+   * @fires PANOLENS.Panorama#enter-complete
+   */
+  PANOLENS.Panorama.prototype.fadeIn = function () {
 
-		new TWEEN.Tween( this.material )
-		.to( { opacity: 1 }, this.animationDuration )
-		.easing( TWEEN.Easing.Quartic.Out )
-		.onComplete( function () {
+    new TWEEN.Tween( this.material )
+    .to( { opacity: 1 }, this.animationDuration )
+    .easing( TWEEN.Easing.Quartic.Out )
+    .onComplete( function () {
 
-			this.toggleInfospotVisibility( true, this.animationDuration );
+      this.toggleInfospotVisibility( true, this.animationDuration );
 
-			/**
-			 * Enter panorama complete event
-			 * @event PANOLENS.Panorama#enter-complete
-			 * @type {object} 
-			 */
-			this.dispatchEvent( { type: 'enter-complete' } );
+      /**
+       * Enter panorama complete event
+       * @event PANOLENS.Panorama#enter-complete
+       * @type {object}
+       */
+      this.dispatchEvent( { type: 'enter-complete' } );
 
-		}.bind( this ) )
-		.start();
+    }.bind( this ) )
+    .start();
 
-	};
+  };
 
-	/**
-	 * Start fading out animation
-	 */
-	PANOLENS.Panorama.prototype.fadeOut = function () {
+  /**
+   * Start fading out animation
+   */
+  PANOLENS.Panorama.prototype.fadeOut = function () {
 
-		new TWEEN.Tween( this.material )
-		.to( { opacity: 0 }, this.animationDuration )
-		.easing( TWEEN.Easing.Quartic.Out )
-		.start();
+    new TWEEN.Tween( this.material )
+    .to( { opacity: 0 }, this.animationDuration )
+    .easing( TWEEN.Easing.Quartic.Out )
+    .start();
 
-	};
+  };
 
-	/**
-	 * This will be called when entering a panorama 
-	 * @fires PANOLENS.Panorama#enter
-	 * @fires PANOLENS.Panorama#enter-animation-start
-	 */
-	PANOLENS.Panorama.prototype.onEnter = function () {
+  /**
+   * This will be called when entering a panorama
+   * @fires PANOLENS.Panorama#enter
+   * @fires PANOLENS.Panorama#enter-animation-start
+   */
+  PANOLENS.Panorama.prototype.onEnter = function () {
 
-		new TWEEN.Tween( this )
-		.to( {}, this.animationDuration )
-		.easing( TWEEN.Easing.Quartic.Out )
-		.onStart( function () {
+    new TWEEN.Tween( this )
+    .to( {}, this.animationDuration )
+    .easing( TWEEN.Easing.Quartic.Out )
+    .onStart( function () {
 
-			/**
-			 * Enter panorama and animation starting event
-			 * @event PANOLENS.Panorama#enter-animation-start
-			 * @type {object} 
-			 */
-			this.dispatchEvent( { type: 'enter-animation-start' } );
+      /**
+       * Enter panorama and animation starting event
+       * @event PANOLENS.Panorama#enter-animation-start
+       * @type {object}
+       */
+      this.dispatchEvent( { type: 'enter-animation-start' } );
 
-			if ( this.loaded ) {
+      if ( this.loaded ) {
 
-				this.fadeIn();
+        this.fadeIn();
 
-			} else {
+      } else {
 
-				this.load();
+        this.load();
 
-			}
+      }
 
-			this.visible = true;
-			this.material.visible = true;
-		} )
-		.delay( this.animationDuration )
-		.start();
+      this.visible = true;
+      this.material.visible = true;
+    } )
+    .delay( this.animationDuration )
+    .start();
 
-		/**
-		 * Enter panorama event
-		 * @event PANOLENS.Panorama#enter
-		 * @type {object} 
-		 */
-		this.dispatchEvent( { type: 'enter' } );
+    /**
+     * Enter panorama event
+     * @event PANOLENS.Panorama#enter
+     * @type {object}
+     */
+    this.dispatchEvent( { type: 'enter' } );
 
-	};
+  };
 
-	/**
-	 * This will be called when leaving a panorama
-	 * @fires PANOLENS.Panorama#leave
-	 */
-	PANOLENS.Panorama.prototype.onLeave = function () {
+  /**
+   * This will be called when leaving a panorama
+   * @fires PANOLENS.Panorama#leave
+   */
+  PANOLENS.Panorama.prototype.onLeave = function () {
 
-		new TWEEN.Tween( this )
-		.to( {}, this.animationDuration )
-		.easing( TWEEN.Easing.Quartic.Out )
-		.onStart( function () {
+    new TWEEN.Tween( this )
+    .to( {}, this.animationDuration )
+    .easing( TWEEN.Easing.Quartic.Out )
+    .onStart( function () {
 
-			this.fadeOut();
-			this.toggleInfospotVisibility( false );
+      this.fadeOut();
+      this.toggleInfospotVisibility( false );
 
-		} )
-		.onComplete( function () {
+    } )
+    .onComplete( function () {
 
-			this.visible = false;
-			this.material.visible = true;
+      this.visible = false;
+      this.material.visible = true;
 
-		} )
-		.start();
+    } )
+    .start();
 
-		/**
-		 * Leave panorama event
-		 * @event PANOLENS.Panorama#leave
-		 * @type {object} 
-		 */
-		this.dispatchEvent( { type: 'leave' } );
+    /**
+     * Leave panorama event
+     * @event PANOLENS.Panorama#leave
+     * @type {object}
+     */
+    this.dispatchEvent( { type: 'leave' } );
 
-	};
+  };
 
-	/**
-	 * Dispose panorama
-	 */
-	PANOLENS.Panorama.prototype.dispose = function () {
+  /**
+   * Dispose panorama
+   */
+  PANOLENS.Panorama.prototype.dispose = function () {
 
-		// recursive disposal on 3d objects
-		function recursiveDispose ( object ) {
+    // recursive disposal on 3d objects
+    function recursiveDispose ( object ) {
 
-			for ( var i = object.children.length - 1; i >= 0; i-- ) {
+      for ( var i = object.children.length - 1; i >= 0; i-- ) {
 
-				recursiveDispose( object.children[i] );
-				object.remove( object.children[i] );
+        recursiveDispose( object.children[i] );
+        object.remove( object.children[i] );
 
-			}
+      }
 
-			if ( object instanceof PANOLENS.Infospot ) {
+      if ( object instanceof PANOLENS.Infospot ) {
 
-				object.dispose();
+        object.dispose();
 
-			}
-			
-			object.geometry &amp;&amp; object.geometry.dispose();
-			object.material &amp;&amp; object.material.dispose();
-		}
+      }
 
-		recursiveDispose( this );
+      object.geometry &amp;&amp; object.geometry.dispose();
+      object.material &amp;&amp; object.material.dispose();
+    }
 
-		if ( this.parent ) {
+    recursiveDispose( this );
 
-			this.parent.remove( this );
+    if ( this.parent ) {
 
-		}
+      this.parent.remove( this );
 
-	};
+    }
+
+  };
 
 } )();</pre>
     </article>
@@ -662,7 +662,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 	
-		on 2016-05-27T00:01:31-07:00
+		on 2016-06-08T11:52:49-05:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

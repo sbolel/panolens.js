@@ -98,43 +98,40 @@
 
 
     <section class="readme-section">
-        <article><h1><a href="http://pchen66.github.io/Panolens">Panolens.js</a></h1><p>###Javascript Panorama Viewer</p>
-<p>Panolens.js is an event-driven and WebGL based panorama viewer. It's built on top of <a href="https://github.com/mrdoob/three.js">Three.JS</a>. </p>
+        <article><h1><a href="https://pchen66.github.io/Panolens">Panolens.js</a></h1><h5>Fork of <a href="https://pchen66.github.io/Panolens"><code>Panolens.js</code></a> by <a href="https://pchen66.github.io"><strong>pchen66</strong></a></h5><p>Panolens.js is an event-driven and WebGL based panorama viewer built on top of <a href="https://github.com/mrdoob/three.js">Three.JS</a>. </p>
 <p><img src="https://github.com/pchen66/pchen66.github.io/blob/master/Panolens/images/panolens.gif?raw=true" alt="Panorama Demo"></p>
-<p>###Usage</p>
-<p>Include <code>three.min.js</code> and <code>panolens.min.js</code></p>
+<h2>Installation</h2><p>Using npm:</p>
+<pre class="prettyprint source"><code>npm install --save panolens</code></pre><p>Building from source:</p>
+<pre class="prettyprint source"><code>git clone git@github.com:sbolel/panolens.js.git
+cd ./panolens
+npm run build</code></pre><h2>Usage</h2><h4>Attaching a single Panolens viewer to the document <code>&lt;body&gt;</code></h4><p>Include <a href="https://github.com/mrdoob/three.js"><code>three.min.js</code></a> and <a href="dist/panolens.min.js"><code>panolens.min.js</code></a></p>
 <pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/three.min.js&quot;>&lt;/script>
-&lt;script src=&quot;js/panolens.min.js&quot;>&lt;/script></code></pre><p>This code creates a 360 image panorama. The first panorama added to the viewer will be the entry point. To link panoramas, simply use <code>panorama.link( other_panorama )</code> to connect the two. See <a href="http://pchen66.github.io/Panolens/">examples</a> and <a href="http://pchen66.github.io/Panolens/docs/index.html">documentation</a> for more details.</p>
+&lt;script src=&quot;js/panolens.min.js&quot;>&lt;/script></code></pre><p>This code creates a 360 image panorama. The first panorama added to the viewer will be the entry point. To link panoramas, simply use <code>panorama.link( other_panorama )</code> to connect the two. See <a href="https://pchen66.github.io/Panolens">pchen66/examples</a> and <a href="https://pchen66.github.io/Panolens/docs/index.html">documentation</a> for more details.</p>
 <pre class="prettyprint source lang-html"><code>&lt;script>
-
-    var panorama, viewer;
-
-    panorama = new PANOLENS.ImagePanorama( 'asset/equirectangular.jpg' );
-
-    viewer = new PANOLENS.Viewer();
-    viewer.add( panorama );
-
-&lt;/script></code></pre><p>###PANOLENS.Viewer Configuration
-All attributes are optional</p>
+  const panorama = new PANOLENS.ImagePanorama('asset/equirectangular.jpg');
+  const viewer = new PANOLENS.Viewer();
+  viewer.add(panorama);
+&lt;/script></code></pre><h4>Initializing multiple Panolens viewers on a page</h4><p>See <a href="https://github.com/sbolel/pano"><strong><code>pano</code></strong></a> for creating multiple panoramic viewers on a single page</p>
+<h4>Configuring PANOLENS.Viewer</h4><p>All attributes of the configuration object are optional:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script>
-    viewer = new PANOLENS.Viewer({
-        container: document.body,    // A DOM Element container
-        controlBar: true,             // Vsibility of bottom control bar
-        controlButtons: [],            // Buttons array in the control bar. Default to ['fullscreen', 'navigation', 'vr', 'video']
-        autoHideControlBar: false,    // Auto hide control bar
-        autoHideInfospot: true,        // Auto hide infospots
-        horizontalView: false,        // Allow only horizontal camera control
-        cameraFov: 60,                // Camera field of view in degree
-        reverseDragging: false,        // Reverse orbit control direction
-        enableReticle: false,        // Enable reticle for mouseless interaction
-        dwellTime: 1500,            // Dwell time for reticle selection in millisecond
-        autoReticleSelect: true,    // Auto select a clickable target after dwellTime
-        passiveRendering: false,    // Render only when control triggered by user input 
-    });
-&lt;/script></code></pre><p>###Examples</p>
-<p>Check Panolens <a href="http://pchen66.github.io/Panolens/#Example">example page</a></p>
-<p>###Features</p>
-<ol>
+  viewer = new PANOLENS.Viewer({
+    autoHideControlBar: false,  // Auto hide control bar
+    autoHideInfospot: true,     // Auto hide infospots
+    autoReticleSelect: true,    // Auto select a clickable target after dwellTime
+    cameraFov: 60,              // Camera field of view in degree
+    container: document.body,   // A DOM Element container. Default: document.body
+    controlBar: true,           // Vsibility of bottom control bar.
+    controlButtons: [],         // Buttons in control bar. Default: ['fullscreen','navigation','vr','video']
+    dwellTime: 1500,            // Dwell time for reticle selection in millisecond
+    enableReticle: false,       // Enable reticle for mouseless interaction
+    horizontalView: false,      // Allow only horizontal camera control
+    passiveRendering: false,    // Render only when control triggered by user input 
+    reverseDragging: false,     // Reverse orbit control direction
+  });
+&lt;/script></code></pre><h4>How to add an infospot (hotspot)</h4><p>Move cursor on a specific point in a panorama and press <code>Ctrl</code> with mouse clicking or hovering, which will generate position (x, y, z) in the console. See <a href="http://pchen66.github.io/Panolens/examples/panorama_infospot.html">Panorama Infospot</a> example for creating and attaching infospots.</p>
+<p><img src="https://github.com/pchen66/pchen66.github.io/blob/master/Panolens/images/panolens_add_infospot_480p.gif?raw=true" alt="Panorama Finding Infospot Position"></p>
+<h2>Examples</h2><p>Check Panolens <a href="https://pchen66.github.io/Panolens/#Example">examples page</a></p>
+<h2>Features</h2><ul>
 <li>Support equirectangular image</li>
 <li>Support cubemap images</li>
 <li>Support google streetview with panoId (<a href="http://stackoverflow.com/questions/29916149/google-maps-streetview-how-to-get-panorama-id">How to get Panorama ID</a>)</li>
@@ -142,17 +139,13 @@ All attributes are optional</p>
 <li>Support text/image/domElement annotations (Infospot)</li>
 <li>Built-in Orbit / DeviceOrientation camera controls</li>
 <li>Built-in fullscreen and video control widgets</li>
-</ol>
-<p>###How to add an infospot (hotspot)</p>
-<p>Move cursor on a specific point in a panorama and press <code>Ctrl</code> with mouse clicking or hovering, which will generate position (x, y, z) in the console. See <a href="http://pchen66.github.io/Panolens/examples/panorama_infospot.html">Panorama Infospot</a> example for creating and attaching infospots.</p>
-<p><img src="https://github.com/pchen66/pchen66.github.io/blob/master/Panolens/images/panolens_add_infospot_480p.gif?raw=true" alt="Panorama Finding Infospot Position"></p>
-<p>###Dependency</p>
-<p>Panolens.js includes <a href="https://github.com/tweenjs/tween.js/">Tween.js</a> by default</p>
-<p>###Future</p>
-<ol>
+</ul>
+<h2>Dependency</h2><p>Panolens.js includes [Tween.js][tween] by default</p>
+<h2>Future</h2><ul>
+<li>ES6</li>
 <li>Add dwell animation</li>
 <li>Add AR capability</li>
-</ol></article>
+</ul></article>
     </section>
 
 
@@ -196,7 +189,7 @@ All attributes are optional</p>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 	
-		on 2016-05-27T00:01:31-07:00
+		on 2016-06-08T11:52:49-05:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

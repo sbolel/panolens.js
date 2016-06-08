@@ -83,101 +83,101 @@
     <article>
         <pre
             class="sunlight-highlight-javascript ">(function(){
-	
-	'use strict';
+
+  'use strict';
 
     /**
      * Group consists of tile array
      * @constructor
-     * @param {array}  tileArray         - Tile array of PANOLENS.Tile 
+     * @param {array}  tileArray         - Tile array of PANOLENS.Tile
      * @param {number} verticalGap       - Vertical gap between each tile
      * @param {number} depthGap          - Depth gap between each tile
      * @param {number} animationDuration - Animation duration
      * @param {number} offset            - Offset index
      */
-	PANOLENS.TileGroup = function ( tileArray, verticalGap, depthGap, animationDuration, offset ) {
+  PANOLENS.TileGroup = function ( tileArray, verticalGap, depthGap, animationDuration, offset ) {
 
-		var scope = this, textureLoader;
+    var scope = this, textureLoader;
 
-		THREE.Object3D.call( this );
+    THREE.Object3D.call( this );
 
-		this.tileArray = tileArray || [];
-		this.offset = offset !== undefined ? offset : 0;
-		this.v_gap = verticalGap !== undefined ? verticalGap : 6;
-		this.d_gap = depthGap !== undefined ? depthGap : 2;
-		this.animationDuration = animationDuration !== undefined ? animationDuration : 200;
-		this.animationEasing = TWEEN.Easing.Exponential.Out;
-		this.visibleDelta = 2;
+    this.tileArray = tileArray || [];
+    this.offset = offset !== undefined ? offset : 0;
+    this.v_gap = verticalGap !== undefined ? verticalGap : 6;
+    this.d_gap = depthGap !== undefined ? depthGap : 2;
+    this.animationDuration = animationDuration !== undefined ? animationDuration : 200;
+    this.animationEasing = TWEEN.Easing.Exponential.Out;
+    this.visibleDelta = 2;
 
-		this.tileArray.map( function ( tile, index ) {
+    this.tileArray.map( function ( tile, index ) {
 
-			if ( tile.image ) {
+      if ( tile.image ) {
 
-				PANOLENS.Utils.TextureLoader.load( tile.image, scope.setTexture.bind( tile ) );
+        PANOLENS.Utils.TextureLoader.load( tile.image, scope.setTexture.bind( tile ) );
 
-			}
+      }
 
-			tile.position.set( 0, index * -scope.v_gap, index * -scope.d_gap );
-			tile.originalPosition = tile.position.clone();
-			tile.setEntity( scope );
-			scope.add( tile );
+      tile.position.set( 0, index * -scope.v_gap, index * -scope.d_gap );
+      tile.originalPosition = tile.position.clone();
+      tile.setEntity( scope );
+      scope.add( tile );
 
-		} );
+    } );
 
-		this.updateVisbility();
+    this.updateVisbility();
 
-	}
+  }
 
-	PANOLENS.TileGroup.prototype = Object.create( THREE.Object3D.prototype );
+  PANOLENS.TileGroup.prototype = Object.create( THREE.Object3D.prototype );
 
-	PANOLENS.TileGroup.prototype.constructor = PANOLENS.TileGroup;
+  PANOLENS.TileGroup.prototype.constructor = PANOLENS.TileGroup;
 
     /**
      * Update corresponding tile textures
      * @param  {array} imageArray - Image array with index to index image update
      */
-	PANOLENS.TileGroup.prototype.updateTexture = function ( imageArray ) {
+  PANOLENS.TileGroup.prototype.updateTexture = function ( imageArray ) {
 
-		var scope = this;
+    var scope = this;
 
-		imageArray = imageArray || [];
-		this.children.map( function ( child, index ) {
-			if ( child instanceof PANOLENS.Tile &amp;&amp; imageArray[index] ) {
-				PANOLENS.Utils.TextureLoader.load( imageArray[index], scope.setTexture.bind( child ) );
-	    		if ( child.outline ) {
-	    			child.outline.material.visible = true;
-	    		}
-			}
-		} );
+    imageArray = imageArray || [];
+    this.children.map( function ( child, index ) {
+      if ( child instanceof PANOLENS.Tile &amp;&amp; imageArray[index] ) {
+        PANOLENS.Utils.TextureLoader.load( imageArray[index], scope.setTexture.bind( child ) );
+          if ( child.outline ) {
+            child.outline.material.visible = true;
+          }
+      }
+    } );
 
-	};
+  };
 
     /**
      * Update all tile textures and hide the remaining ones
      * @param  {array} imageArray - Image array with index to index image update
      */
-	PANOLENS.TileGroup.prototype.updateAllTexture = function ( imageArray ) {
+  PANOLENS.TileGroup.prototype.updateAllTexture = function ( imageArray ) {
 
-		this.updateTexture( imageArray );
+    this.updateTexture( imageArray );
 
-		if ( imageArray.length &lt; this.children.length ) {
-			for ( var i = imageArray.length; i &lt; this.children.length; i++ ) {
-				if ( this.children[i] instanceof PANOLENS.Tile ) {
-					this.children[i].material.visible = false;
-					if ( this.children[i].outline ) {
-						this.children[i].outline.material.visible = false;
-					}
-				}
-			}
-		}
+    if ( imageArray.length &lt; this.children.length ) {
+      for ( var i = imageArray.length; i &lt; this.children.length; i++ ) {
+        if ( this.children[i] instanceof PANOLENS.Tile ) {
+          this.children[i].material.visible = false;
+          if ( this.children[i].outline ) {
+            this.children[i].outline.material.visible = false;
+          }
+        }
+      }
+    }
 
-	}
+  }
 
     /**
      * Set individual texture
      * @param {THREE.Texture} texture - Texture to be updated
      */
-	PANOLENS.TileGroup.prototype.setTexture = function ( texture ) {
+  PANOLENS.TileGroup.prototype.setTexture = function ( texture ) {
 
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
@@ -192,63 +192,63 @@
      */
     PANOLENS.TileGroup.prototype.updateVisbility = function () {
 
-    	this.children[this.offset].visible = true;
-    	new TWEEN.Tween( this.children[this.offset].material )
-		.to( { opacity: 1 }, this.animationDuration )
-		.easing( this.animationEasing )
-		.start();
-    	
-    	if ( this.children[this.offset].outline ) {
+      this.children[this.offset].visible = true;
+      new TWEEN.Tween( this.children[this.offset].material )
+    .to( { opacity: 1 }, this.animationDuration )
+    .easing( this.animationEasing )
+    .start();
 
-    		this.children[this.offset].outline.visible = true;
+      if ( this.children[this.offset].outline ) {
 
-    	}
+        this.children[this.offset].outline.visible = true;
 
-    	// Backward
-    	for ( var i = this.offset - 1; i >= 0 ; i-- ) {
+      }
 
-    		if ( this.tileArray.indexOf(this.children[i]) === -1 ) { continue; }
+      // Backward
+      for ( var i = this.offset - 1; i >= 0 ; i-- ) {
 
-    		if ( this.offset - i &lt;= this.visibleDelta ) {
+        if ( this.tileArray.indexOf(this.children[i]) === -1 ) { continue; }
 
-    			this.children[i].visible = true;
-    			new TWEEN.Tween( this.children[i].material )
-    			.to( { opacity: 1 / ( this.offset - i ) * 0.5 }, this.animationDuration )
-    			.easing( this.animationEasing )
-    			.start();
+        if ( this.offset - i &lt;= this.visibleDelta ) {
 
-    		} else {
+          this.children[i].visible = true;
+          new TWEEN.Tween( this.children[i].material )
+          .to( { opacity: 1 / ( this.offset - i ) * 0.5 }, this.animationDuration )
+          .easing( this.animationEasing )
+          .start();
 
-    			this.children[i].visible = false;
+        } else {
 
-    		}
+          this.children[i].visible = false;
 
-    		this.children[i].outline &amp;&amp; (this.children[i].outline.visible = false);
+        }
 
-    	}
+        this.children[i].outline &amp;&amp; (this.children[i].outline.visible = false);
 
-    	// Forward
-    	for ( var i = this.offset + 1; i &lt; this.children.length ; i++ ) {
+      }
 
-    		if ( this.tileArray.indexOf(this.children[i]) === -1 ) { continue; }
+      // Forward
+      for ( var i = this.offset + 1; i &lt; this.children.length ; i++ ) {
 
-    		if ( i - this.offset &lt;= this.visibleDelta ) {
+        if ( this.tileArray.indexOf(this.children[i]) === -1 ) { continue; }
 
-    			this.children[i].visible = true;
-    			new TWEEN.Tween( this.children[i].material )
-    			.to( { opacity: 1 / ( i - this.offset ) * 0.5 }, this.animationDuration )
-    			.easing( this.animationEasing )
-    			.start();
+        if ( i - this.offset &lt;= this.visibleDelta ) {
 
-    		} else {
+          this.children[i].visible = true;
+          new TWEEN.Tween( this.children[i].material )
+          .to( { opacity: 1 / ( i - this.offset ) * 0.5 }, this.animationDuration )
+          .easing( this.animationEasing )
+          .start();
 
-    			this.children[i].visible = false;
+        } else {
 
-    		}
+          this.children[i].visible = false;
 
-    		this.children[i].outline &amp;&amp; (this.children[i].outline.visible = false);
+        }
 
-    	}
+        this.children[i].outline &amp;&amp; (this.children[i].outline.visible = false);
+
+      }
 
     };
 
@@ -258,74 +258,74 @@
      */
     PANOLENS.TileGroup.prototype.scrollUp = function ( duration ) {
 
-    	var tiles = this.tileArray, offset;
+      var tiles = this.tileArray, offset;
 
-    	duration = duration !== undefined ? duration : this.animationDuration;
+      duration = duration !== undefined ? duration : this.animationDuration;
 
-    	offset = this.offset + 1;
+      offset = this.offset + 1;
 
-    	if ( this.offset &lt; tiles.length - 1 &amp;&amp; tiles[ this.offset + 1 ].material.visible ) {
+      if ( this.offset &lt; tiles.length - 1 &amp;&amp; tiles[ this.offset + 1 ].material.visible ) {
 
-    		for ( var i = tiles.length - 1; i >= 0; i-- ) {
-	    		
-    			new TWEEN.Tween( tiles[i].position )
-    			.to({ y: ( i - offset ) * -this.v_gap,
-    				  z: Math.abs( i - offset ) * -this.d_gap }, duration )
-    			.easing( this.animationEasing )
-    			.start();
-	    		
-	    	}
+        for ( var i = tiles.length - 1; i >= 0; i-- ) {
 
-	    	this.offset ++;
-	    	this.updateVisbility();
-	    	this.dispatchEvent( { type: 'scroll', direction: 'up' } );
+          new TWEEN.Tween( tiles[i].position )
+          .to({ y: ( i - offset ) * -this.v_gap,
+              z: Math.abs( i - offset ) * -this.d_gap }, duration )
+          .easing( this.animationEasing )
+          .start();
 
-    	}
+        }
+
+        this.offset ++;
+        this.updateVisbility();
+        this.dispatchEvent( { type: 'scroll', direction: 'up' } );
+
+      }
 
     };
 
     /**
-     * Scroll down 
+     * Scroll down
      * @param  {number} duration - Scroll up duration
      */
     PANOLENS.TileGroup.prototype.scrollDown = function ( duration ) {
 
-    	var tiles = this.tileArray, offset;
+      var tiles = this.tileArray, offset;
 
-    	duration = duration !== undefined ? duration : this.animationDuration;
+      duration = duration !== undefined ? duration : this.animationDuration;
 
-    	offset = this.offset - 1;
+      offset = this.offset - 1;
 
-    	if ( this.offset > 0 &amp;&amp; tiles[ this.offset - 1 ].material.visible ) {
+      if ( this.offset > 0 &amp;&amp; tiles[ this.offset - 1 ].material.visible ) {
 
-    		for ( var i = 0; i &lt; tiles.length; i++ ) {
+        for ( var i = 0; i &lt; tiles.length; i++ ) {
 
-	    		new TWEEN.Tween( tiles[i].position )
-    			.to({ y: ( i - offset ) * -this.v_gap,
-    				  z: Math.abs( i - offset ) * -this.d_gap }, duration )
-    			.easing( this.animationEasing )
-    			.start();
-	    		
-	    	}
+          new TWEEN.Tween( tiles[i].position )
+          .to({ y: ( i - offset ) * -this.v_gap,
+              z: Math.abs( i - offset ) * -this.d_gap }, duration )
+          .easing( this.animationEasing )
+          .start();
 
-	    	this.offset --;
-	    	this.updateVisbility();
-	    	this.dispatchEvent( { type: 'scroll', direction: 'down' } );
+        }
 
-    	}
+        this.offset --;
+        this.updateVisbility();
+        this.dispatchEvent( { type: 'scroll', direction: 'down' } );
+
+      }
 
     };
 
     PANOLENS.TileGroup.prototype.reset = function () {
 
-    	this.tileArray.map( function ( child, index ) {
+      this.tileArray.map( function ( child, index ) {
 
-    		child.position.copy( child.originalPosition );
+        child.position.copy( child.originalPosition );
 
-    	} );
+      } );
 
-    	this.offset = 0;
-    	this.updateVisbility();
+      this.offset = 0;
+      this.updateVisbility();
 
     };
 
@@ -335,7 +335,7 @@
      */
     PANOLENS.TileGroup.prototype.getIndex = function () {
 
-    	return this.offset;
+      return this.offset;
 
     };
 
@@ -345,19 +345,19 @@
      */
     PANOLENS.TileGroup.prototype.getTileCount = function () {
 
-    	var count = 0;
+      var count = 0;
 
-    	this.tileArray.map( function ( tile ) {
+      this.tileArray.map( function ( tile ) {
 
-    		if ( tile.material.visible ) {
+        if ( tile.material.visible ) {
 
-    			count ++;
+          count ++;
 
-    		}
+        }
 
-    	} );
+      } );
 
-    	return count;
+      return count;
 
     };
 
@@ -400,7 +400,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 	
-		on 2016-05-27T00:01:31-07:00
+		on 2016-06-08T11:52:49-05:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

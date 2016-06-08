@@ -1,78 +1,78 @@
 (function(){
-	
-	'use strict';
 
-	/**
-	 * Cube Texture Loader based on {@link https://github.com/mrdoob/three.js/blob/master/src/loaders/CubeTextureLoader.js}
-	 * @memberOf PANOLENS.Utils
-	 * @namespace
-	 */
-	PANOLENS.Utils.CubeTextureLoader = {};
+  'use strict';
 
-	/**
-	 * Load 6 images as a cube texture
-	 * @param  {array}   urls        - Array with 6 image urls
-	 * @param  {function} onLoad     - On load callback
-	 * @param  {function} onProgress - In progress callback
-	 * @param  {function} onError    - On error callback
-	 * @return {THREE.CubeTexture}   - Cube texture
-	 */
-	PANOLENS.Utils.CubeTextureLoader.load = function ( urls, onLoad, onProgress, onError ) {
+  /**
+   * Cube Texture Loader based on {@link https://github.com/mrdoob/three.js/blob/master/src/loaders/CubeTextureLoader.js}
+   * @memberOf PANOLENS.Utils
+   * @namespace
+   */
+  PANOLENS.Utils.CubeTextureLoader = {};
 
-		var texture, loaded, progress, all, loadings;
+  /**
+   * Load 6 images as a cube texture
+   * @param  {array}   urls        - Array with 6 image urls
+   * @param  {function} onLoad     - On load callback
+   * @param  {function} onProgress - In progress callback
+   * @param  {function} onError    - On error callback
+   * @return {THREE.CubeTexture}   - Cube texture
+   */
+  PANOLENS.Utils.CubeTextureLoader.load = function ( urls, onLoad, onProgress, onError ) {
 
-		texture = new THREE.CubeTexture( [] );
+    var texture, loaded, progress, all, loadings;
 
-		loaded = 0;
-		progress = {};
-		all = {};
+    texture = new THREE.CubeTexture( [] );
 
-		urls.map( function ( url, index ) {
+    loaded = 0;
+    progress = {};
+    all = {};
 
-			PANOLENS.Utils.ImageLoader.load( url, function ( image ) {
+    urls.map( function ( url, index ) {
 
-				texture.images[ index ] = image;
+      PANOLENS.Utils.ImageLoader.load( url, function ( image ) {
 
-				loaded++;
+        texture.images[ index ] = image;
 
-				if ( loaded === 6 ) {
+        loaded++;
 
-					texture.needsUpdate = true;
+        if ( loaded === 6 ) {
 
-					onLoad && onLoad( texture );
+          texture.needsUpdate = true;
 
-				}
+          onLoad && onLoad( texture );
 
-			}, function ( event ) {
+        }
 
-				progress[ index ] = { loaded: event.loaded, total: event.total };
+      }, function ( event ) {
 
-				all.loaded = 0;
-				all.total = 0;
-				loadings = 0;
+        progress[ index ] = { loaded: event.loaded, total: event.total };
 
-				for ( var i in progress ) {
+        all.loaded = 0;
+        all.total = 0;
+        loadings = 0;
 
-					loadings++;
-					all.loaded += progress[ i ].loaded;
-					all.total += progress[ i ].total;
+        for ( var i in progress ) {
 
-				}
+          loadings++;
+          all.loaded += progress[ i ].loaded;
+          all.total += progress[ i ].total;
 
-				if ( loadings < 6 ) {
+        }
 
-					all.total = all.total / loadings * 6;
+        if ( loadings < 6 ) {
 
-				}
+          all.total = all.total / loadings * 6;
 
-				onProgress && onProgress( all );
+        }
 
-			}, onError );
+        onProgress && onProgress( all );
 
-		} );
+      }, onError );
 
-		return texture;
+    } );
 
-	};
+    return texture;
+
+  };
 
 })();

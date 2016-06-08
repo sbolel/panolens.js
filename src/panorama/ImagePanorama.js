@@ -1,77 +1,77 @@
 (function(){
-	
-	'use strict';
-	
-	/**
-	 * Equirectangular based image panorama
-	 * @constructor
-	 * @param {string} image - Image url or HTMLImageElement
-	 * @param {number} [radius=5000] - Radius of panorama
-	 */
-	PANOLENS.ImagePanorama = function ( image, radius ) {
 
-		radius = radius || 5000;
+  'use strict';
 
-		var geometry = new THREE.SphereGeometry( radius, 60, 40 ),
-			material = new THREE.MeshBasicMaterial( { opacity: 0, transparent: true } );
+  /**
+   * Equirectangular based image panorama
+   * @constructor
+   * @param {string} image - Image url or HTMLImageElement
+   * @param {number} [radius=5000] - Radius of panorama
+   */
+  PANOLENS.ImagePanorama = function ( image, radius ) {
 
-		PANOLENS.Panorama.call( this, geometry, material );
+    radius = radius || 5000;
 
-		this.src = image;
+    var geometry = new THREE.SphereGeometry( radius, 60, 40 ),
+      material = new THREE.MeshBasicMaterial( { opacity: 0, transparent: true } );
 
-	}
+    PANOLENS.Panorama.call( this, geometry, material );
 
-	PANOLENS.ImagePanorama.prototype = Object.create( PANOLENS.Panorama.prototype );
+    this.src = image;
 
-	PANOLENS.ImagePanorama.prototype.constructor = PANOLENS.ImagePanorama;
+  }
 
-	/**
-	 * Load image asset
-	 * @param  {*} src - Url or image element
-	 */
-	PANOLENS.ImagePanorama.prototype.load = function ( src ) {
+  PANOLENS.ImagePanorama.prototype = Object.create( PANOLENS.Panorama.prototype );
 
-		src = src || this.src;
+  PANOLENS.ImagePanorama.prototype.constructor = PANOLENS.ImagePanorama;
 
-		if ( !src ) { 
+  /**
+   * Load image asset
+   * @param  {*} src - Url or image element
+   */
+  PANOLENS.ImagePanorama.prototype.load = function ( src ) {
 
-			console.warn( 'Image source undefined' );
+    src = src || this.src;
 
-			return; 
+    if ( !src ) {
 
-		} else if ( typeof src === 'string' ) {
+      console.warn( 'Image source undefined' );
 
-			PANOLENS.Utils.TextureLoader.load( src, this.onLoad.bind( this ), this.onProgress.bind( this ), this.onError.bind( this ) );
+      return;
 
-		} else if ( src instanceof HTMLImageElement ) {
+    } else if ( typeof src === 'string' ) {
 
-			this.onLoad( new THREE.Texture( src ) );
+      PANOLENS.Utils.TextureLoader.load( src, this.onLoad.bind( this ), this.onProgress.bind( this ), this.onError.bind( this ) );
 
-		}
+    } else if ( src instanceof HTMLImageElement ) {
 
-		
-	};
+      this.onLoad( new THREE.Texture( src ) );
 
-	/**
-	 * This will be called when image is loaded
-	 * @param  {THREE.Texture} texture - Texture to be updated
-	 */
-	PANOLENS.ImagePanorama.prototype.onLoad = function ( texture ) {
+    }
 
-		texture.minFilter = texture.maxFilter = THREE.LinearFilter;
 
-		texture.needsUpdate = true;
+  };
 
-		this.updateTexture( texture );
+  /**
+   * This will be called when image is loaded
+   * @param  {THREE.Texture} texture - Texture to be updated
+   */
+  PANOLENS.ImagePanorama.prototype.onLoad = function ( texture ) {
 
-		PANOLENS.Panorama.prototype.onLoad.call( this );
-		
-	};
+    texture.minFilter = texture.maxFilter = THREE.LinearFilter;
 
-	PANOLENS.ImagePanorama.prototype.reset = function () {
+    texture.needsUpdate = true;
 
-		PANOLENS.Panorama.prototype.reset.call( this );
+    this.updateTexture( texture );
 
-	};
+    PANOLENS.Panorama.prototype.onLoad.call( this );
+
+  };
+
+  PANOLENS.ImagePanorama.prototype.reset = function () {
+
+    PANOLENS.Panorama.prototype.reset.call( this );
+
+  };
 
 })();

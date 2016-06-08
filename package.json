@@ -1,35 +1,68 @@
 {
   "name": "panolens.js",
-  "version": "0.0.2",
-  "description": "Javascript panorama viewer",
-  "main": "index.js",
+  "version": "0.0.3",
+  "description": "JavaScript panorama viewer using Three.js",
+  "main": "dist/panolens.js",
   "scripts": {
+    "build": "npm install; gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pchen66/panolens.js.git"
+    "url": "git+https://github.com/sbolel/panolens.js.git"
   },
   "keywords": [
-    "panorama",
-    "viewer",
-    "javascript",
+    "3d",
     "html5",
-    "3d"
+    "javascript",
+    "jquery",
+    "pano",
+    "panorama",
+    "three.js",
+    "viewer"
   ],
-  "author": "Ray Chen",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pchen66/panolens.js/issues"
+  "author": {
+    "name": "Sinan Bolel",
+    "email": "sinanbolel@gmail.com",
+    "url": "https://sinanbolel.com"
   },
-  "homepage": "https://github.com/pchen66/panolens.js#readme",
+  "contributors": [
+    {
+      "name": "Ray Chen",
+      "url": "https://github.com/pchen66/pchen66.github.io"
+    },
+    {
+      "name": "Sinan Bolel",
+      "email": "sinanbolel@gmail.com",
+      "url": "https://sinanbolel.com"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "Sinan Bolel",
+      "email": "sinanbolel@gmail.com",
+      "url": "https://sinanbolel.com"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/sbolel/panolens.js/issues"
+  },
+  "homepage": "https://github.com/sbolel/panolens.js#readme",
   "devDependencies": {
-    "gulp": "^3.9.0",
+    "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
-    "gulp-jsdoc3": "^0.2.1",
+    "gulp-jsdoc3": "^0.3.0",
     "gulp-strip-debug": "^1.1.0",
-    "gulp-uglify": "^1.5.2",
-    "three": "^0.76.0",
+    "gulp-uglify": "^1.5.3"
+  },
+  "dependencies": {
+    "three": "^0.77.1",
     "tween.js": "^16.3.4"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "lib": "src"
   }
 }

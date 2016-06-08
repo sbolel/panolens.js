@@ -1,634 +1,634 @@
 (function () {
-	
-	/**
-	 * Widget for controls
-	 * @constructor
-	 * @param {HTMLElement} container - A domElement where default control widget will be attached to
-	 */
-	PANOLENS.Widget = function ( container ) {
 
-		THREE.EventDispatcher.call( this );
+  /**
+   * Widget for controls
+   * @constructor
+   * @param {HTMLElement} container - A domElement where default control widget will be attached to
+   */
+  PANOLENS.Widget = function ( container ) {
 
-		this.container = container;
+    THREE.EventDispatcher.call( this );
 
-		this.barElement;
-		this.fullscreenElement;
-		this.navigationElement;
-		this.vrElement;
-		this.videoElement;
+    this.container = container;
 
-	}
+    this.barElement;
+    this.fullscreenElement;
+    this.navigationElement;
+    this.vrElement;
+    this.videoElement;
 
-	PANOLENS.Widget.prototype = Object.create( THREE.EventDispatcher.prototype );
+  }
 
-	PANOLENS.Widget.prototype.constructor = PANOLENS.Widget;
+  PANOLENS.Widget.prototype = Object.create( THREE.EventDispatcher.prototype );
 
-	/**
-	 * Add control bar
-	 */
-	PANOLENS.Widget.prototype.addControlBar = function () {
+  PANOLENS.Widget.prototype.constructor = PANOLENS.Widget;
 
-		if ( !this.container ) {
+  /**
+   * Add control bar
+   */
+  PANOLENS.Widget.prototype.addControlBar = function () {
 
-			console.warn( 'Widget container not set' ); 
-			return; 
-		}
+    if ( !this.container ) {
 
-		var scope = this, bar, styleTranslate, styleOpacity;
+      console.warn( 'Widget container not set' );
+      return;
+    }
 
-		bar = document.createElement( 'div' );
-		bar.style.width = '100%';
-		bar.style.height = '44px';
-		bar.style.float = 'left';
-		bar.style.transform = bar.style.webkitTransform = bar.style.msTransform = 'translateY(-100%)';
-		bar.style.background = 'rgba( 0, 0, 0, 0.3 )';
-		bar.style.transition = 'all 0.5s ease';
-		bar.isHidden = false;
-		bar.toggle = function () {
-			bar.isHidden = !bar.isHidden;
-			styleTranslate = bar.isHidden ? 'translateY(0)' : 'translateY(-100%)';
-			styleOpacity = bar.isHidden ? 0 : 1;
-			bar.style.transform = bar.style.webkitTransform = bar.style.msTransform = styleTranslate;
-			bar.style.opacity = styleOpacity;
-		};
+    var scope = this, bar, styleTranslate, styleOpacity;
 
-		// Dispose
-		bar.dispose = function () {
+    bar = document.createElement( 'div' );
+    bar.style.width = '100%';
+    bar.style.height = '44px';
+    bar.style.float = 'left';
+    bar.style.transform = bar.style.webkitTransform = bar.style.msTransform = 'translateY(-100%)';
+    bar.style.background = 'rgba( 0, 0, 0, 0.3 )';
+    bar.style.transition = 'all 0.5s ease';
+    bar.isHidden = false;
+    bar.toggle = function () {
+      bar.isHidden = !bar.isHidden;
+      styleTranslate = bar.isHidden ? 'translateY(0)' : 'translateY(-100%)';
+      styleOpacity = bar.isHidden ? 0 : 1;
+      bar.style.transform = bar.style.webkitTransform = bar.style.msTransform = styleTranslate;
+      bar.style.opacity = styleOpacity;
+    };
 
-			if ( scope.fullscreenElement ) {
+    // Dispose
+    bar.dispose = function () {
 
-				bar.removeChild( scope.fullscreenElement );
-				scope.fullscreenElement.dispose();
-				scope.fullscreenElement = null;
+      if ( scope.fullscreenElement ) {
 
-			}
+        bar.removeChild( scope.fullscreenElement );
+        scope.fullscreenElement.dispose();
+        scope.fullscreenElement = null;
 
-			if ( scope.navigationElement ) {
+      }
 
-				bar.removeChild( scope.navigationElement );
-				scope.navigationElement.dispose();
-				scope.navigationElement = null;
+      if ( scope.navigationElement ) {
 
-			}
+        bar.removeChild( scope.navigationElement );
+        scope.navigationElement.dispose();
+        scope.navigationElement = null;
 
-			if ( scope.vrElement ) {
+      }
 
-				bar.removeChild( scope.vrElement );
-				scope.vrElement.dispose();
-				scope.vrElement = null;
+      if ( scope.vrElement ) {
 
-			}
+        bar.removeChild( scope.vrElement );
+        scope.vrElement.dispose();
+        scope.vrElement = null;
 
-			if ( scope.videoElement ) {
+      }
 
-				bar.removeChild( scope.videoElement );
-				scope.videoElement.dispose();
-				scope.videoElement = null;
+      if ( scope.videoElement ) {
 
-			}
+        bar.removeChild( scope.videoElement );
+        scope.videoElement.dispose();
+        scope.videoElement = null;
 
-		};
+      }
 
-		this.container.appendChild( bar );
+    };
 
-		// Event listener
-		this.addEventListener( 'control-bar-toggle', bar.toggle );
+    this.container.appendChild( bar );
 
-		this.barElement = bar;
+    // Event listener
+    this.addEventListener( 'control-bar-toggle', bar.toggle );
 
-	};
+    this.barElement = bar;
 
-	/**
-	 * Add buttons on top of control bar
-	 * @param {string} name - The control button name to be created
-	 */
-	PANOLENS.Widget.prototype.addControlButton = function ( name ) {
+  };
 
-		this.fullscreenElement = name === 'fullscreen' ? this.createFullscreenButton() : this.fullscreenElement;
-		this.navigationElement = name === 'navigation' ? this.createCameraControlButton() : this.navigationElement;
-		this.vrElement = name === 'vr' ? this.createVRButton() : this.vrElement;
-		this.videoElement = name === 'video' ? this.createVideoControl() : this.videoElement;
+  /**
+   * Add buttons on top of control bar
+   * @param {string} name - The control button name to be created
+   */
+  PANOLENS.Widget.prototype.addControlButton = function ( name ) {
 
-		// Add Control Items
-		this.fullscreenElement && this.barElement.appendChild( this.fullscreenElement );
-		this.navigationElement && this.barElement.appendChild( this.navigationElement );
-		this.vrElement && this.barElement.appendChild( this.vrElement );
-		this.videoElement && this.barElement.appendChild( this.videoElement );
+    this.fullscreenElement = name === 'fullscreen' ? this.createFullscreenButton() : this.fullscreenElement;
+    this.navigationElement = name === 'navigation' ? this.createCameraControlButton() : this.navigationElement;
+    this.vrElement = name === 'vr' ? this.createVRButton() : this.vrElement;
+    this.videoElement = name === 'video' ? this.createVideoControl() : this.videoElement;
 
-	};
+    // Add Control Items
+    this.fullscreenElement && this.barElement.appendChild( this.fullscreenElement );
+    this.navigationElement && this.barElement.appendChild( this.navigationElement );
+    this.vrElement && this.barElement.appendChild( this.vrElement );
+    this.videoElement && this.barElement.appendChild( this.videoElement );
 
-	/**
-	 * Create VR button
-	 * @return {HTMLSpanElement} - The dom element icon for VR effect
-	 * @fires PANOLENS.Widget#panolens-viewer-handler
-	 */
-	PANOLENS.Widget.prototype.createVRButton = function () {
+  };
 
-		var scope = this, item;
+  /**
+   * Create VR button
+   * @return {HTMLSpanElement} - The dom element icon for VR effect
+   * @fires PANOLENS.Widget#panolens-viewer-handler
+   */
+  PANOLENS.Widget.prototype.createVRButton = function () {
 
-		function onTap () {
+    var scope = this, item;
 
-			/**
-			 * Viewer handler event
-			 * @type {object}
-			 * @property {string} method - 'toggleVR' function call on PANOLENS.Viewer
-			 */
-			scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleVR' } );
+    function onTap () {
 
-		}
+      /**
+       * Viewer handler event
+       * @type {object}
+       * @property {string} method - 'toggleVR' function call on PANOLENS.Viewer
+       */
+      scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleVR' } );
 
-		item = this.createCustomItem( { 
+    }
 
-			style : { 
+    item = this.createCustomItem( {
 
-				backgroundImage : 'url("' + PANOLENS.DataImage.Cardboard + '")' 
+      style : {
 
-			},
+        backgroundImage : 'url("' + PANOLENS.DataImage.Cardboard + '")'
 
-			onTap : onTap
+      },
 
-		} );
+      onTap : onTap
 
-		return item;
+    } );
 
-	}
+    return item;
 
-	/**
-	 * Create Fullscreen button
-	 * @return {HTMLSpanElement} - The dom element icon for fullscreen
-	 * @fires PANOLENS.Widget#panolens-viewer-handler
-	 */
-	PANOLENS.Widget.prototype.createFullscreenButton = function () {
+  }
 
-		var scope = this, item, isFullscreen = false;
+  /**
+   * Create Fullscreen button
+   * @return {HTMLSpanElement} - The dom element icon for fullscreen
+   * @fires PANOLENS.Widget#panolens-viewer-handler
+   */
+  PANOLENS.Widget.prototype.createFullscreenButton = function () {
 
-		// Don't create button if no support
-		if ( !document.fullscreenEnabled       && 
-			 !document.webkitFullscreenEnabled &&
-			 !document.mozFullScreenEnabled    &&
-			 !document.msFullscreenEnabled ) {
-			return;
-		}
+    var scope = this, item, isFullscreen = false;
 
-		function onTap () {
+    // Don't create button if no support
+    if ( !document.fullscreenEnabled       &&
+       !document.webkitFullscreenEnabled &&
+       !document.mozFullScreenEnabled    &&
+       !document.msFullscreenEnabled ) {
+      return;
+    }
 
-			if ( !isFullscreen ) {
-			    scope.container.requestFullscreen && scope.container.requestFullscreen();
-			    scope.container.msRequestFullscreen && scope.container.msRequestFullscreen();
-			    scope.container.mozRequestFullScreen && scope.container.mozRequestFullScreen();
-			    scope.container.webkitRequestFullscreen && scope.container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-				isFullscreen = true;
-				attachInfospotsToContainer();
-			} else {
-			    document.exitFullscreen && document.exitFullscreen();
-			    document.msExitFullscreen && document.msExitFullscreen();
-			    document.mozCancelFullScreen && document.mozCancelFullScreen();
-			    document.webkitExitFullscreen && document.webkitExitFullscreen();
-				isFullscreen = false;
-			}
+    function onTap () {
 
-			this.style.backgroundImage = ( isFullscreen ) 
-				? 'url("' + PANOLENS.DataImage.FullscreenLeave + '")' 
-				: 'url("' + PANOLENS.DataImage.FullscreenEnter + '")';
+      if ( !isFullscreen ) {
+          scope.container.requestFullscreen && scope.container.requestFullscreen();
+          scope.container.msRequestFullscreen && scope.container.msRequestFullscreen();
+          scope.container.mozRequestFullScreen && scope.container.mozRequestFullScreen();
+          scope.container.webkitRequestFullscreen && scope.container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        isFullscreen = true;
+        attachInfospotsToContainer();
+      } else {
+          document.exitFullscreen && document.exitFullscreen();
+          document.msExitFullscreen && document.msExitFullscreen();
+          document.mozCancelFullScreen && document.mozCancelFullScreen();
+          document.webkitExitFullscreen && document.webkitExitFullscreen();
+        isFullscreen = false;
+      }
 
-			/**
-			 * Viewer handler event
-			 * @type {object}
-			 * @property {string} method - 'toggleFullscreen' function call on PANOLENS.Viewer
-			 */
-			scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleFullscreen', data: isFullscreen } );
+      this.style.backgroundImage = ( isFullscreen )
+        ? 'url("' + PANOLENS.DataImage.FullscreenLeave + '")'
+        : 'url("' + PANOLENS.DataImage.FullscreenEnter + '")';
 
-		}
+      /**
+       * Viewer handler event
+       * @type {object}
+       * @property {string} method - 'toggleFullscreen' function call on PANOLENS.Viewer
+       */
+      scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleFullscreen', data: isFullscreen } );
 
-		// Attach infospot to container when fullscreen
-		function attachInfospotsToContainer () {
+    }
 
-			var infospotElements = document.querySelectorAll( '.panolens-infospot' );
+    // Attach infospot to container when fullscreen
+    function attachInfospotsToContainer () {
 
-			for ( var i = 0; i < infospotElements.length; i++ ) {
+      var infospotElements = document.querySelectorAll( '.panolens-infospot' );
 
-				if ( infospotElements[ i ].parentElement !== scope.container ) {
+      for ( var i = 0; i < infospotElements.length; i++ ) {
 
-					scope.container.appendChild( infospotElements[ i ] );
+        if ( infospotElements[ i ].parentElement !== scope.container ) {
 
-				}
-				
-			}
+          scope.container.appendChild( infospotElements[ i ] );
 
-		}
+        }
 
-		item = this.createCustomItem( { 
+      }
 
-			style : { 
+    }
 
-				backgroundImage : 'url("' + PANOLENS.DataImage.FullscreenEnter + '")' 
+    item = this.createCustomItem( {
 
-			},
+      style : {
 
-			onTap : onTap
+        backgroundImage : 'url("' + PANOLENS.DataImage.FullscreenEnter + '")'
 
-		} );
+      },
 
-		return item;
+      onTap : onTap
 
-	};
+    } );
 
-	/**
-	 * Create camera control button
-	 * @return {HTMLSpanElement} - The dom element icon for camera navigation
-	 * @fires PANOLENS.Widget#panolens-viewer-handler
-	 */
-	PANOLENS.Widget.prototype.createCameraControlButton = function () {
+    return item;
 
-		var scope = this, item;
+  };
 
-		function onTap(){
+  /**
+   * Create camera control button
+   * @return {HTMLSpanElement} - The dom element icon for camera navigation
+   * @fires PANOLENS.Widget#panolens-viewer-handler
+   */
+  PANOLENS.Widget.prototype.createCameraControlButton = function () {
 
-			/**
-			 * Viewer handler event
-			 * @type {object}
-			 * @property {string} method - 'toggleNextControl' function call on PANOLENS.Viewer
-			 */
-			scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleNextControl' } );
+    var scope = this, item;
 
-			this.controlName = ( this.controlName === 'orbit' ) ? 'device-orientation' : 'orbit';
+    function onTap(){
 
-			this.style.backgroundImage = 'url("' + ( this.controlName === 'orbit' 
-				? PANOLENS.DataImage.Gyro 
-				: PANOLENS.DataImage.Orbit ) + '")';
+      /**
+       * Viewer handler event
+       * @type {object}
+       * @property {string} method - 'toggleNextControl' function call on PANOLENS.Viewer
+       */
+      scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleNextControl' } );
 
-		}
+      this.controlName = ( this.controlName === 'orbit' ) ? 'device-orientation' : 'orbit';
 
-		item = this.createCustomItem( {
+      this.style.backgroundImage = 'url("' + ( this.controlName === 'orbit'
+        ? PANOLENS.DataImage.Gyro
+        : PANOLENS.DataImage.Orbit ) + '")';
 
-			style: {
+    }
 
-				backgroundImage: 'url("' + PANOLENS.DataImage.Gyro + '")'
+    item = this.createCustomItem( {
 
-			},
+      style: {
 
-			onTap : onTap
+        backgroundImage: 'url("' + PANOLENS.DataImage.Gyro + '")'
 
-		} );
+      },
 
-		item.controlName = 'orbit';
+      onTap : onTap
 
-		return item;
+    } );
 
-	};
+    item.controlName = 'orbit';
 
-	/**
-	 * Create video control container
-	 * @return {HTMLSpanElement} - The dom element icon for video control
-	 */
-	PANOLENS.Widget.prototype.createVideoControl = function () {
+    return item;
 
-		var item;
+  };
 
-		item = document.createElement( 'span' );
-		item.style.display = 'none';
-		item.show = function () { 
+  /**
+   * Create video control container
+   * @return {HTMLSpanElement} - The dom element icon for video control
+   */
+  PANOLENS.Widget.prototype.createVideoControl = function () {
 
-			item.style.display = '';
+    var item;
 
-		};
+    item = document.createElement( 'span' );
+    item.style.display = 'none';
+    item.show = function () {
 
-		item.hide = function () { 
+      item.style.display = '';
 
-			item.style.display = 'none';
-			item.controlButton.paused = true;
-			item.controlButton.update();
-			item.seekBar.setProgress( 0 );
-		};
+    };
 
-		item.controlButton = this.createVideoControlButton();
-		item.seekBar = this.createVideoControlSeekbar();
-		
-		item.appendChild( item.controlButton );
-		item.appendChild( item.seekBar );
+    item.hide = function () {
 
-		item.dispose = function () {
+      item.style.display = 'none';
+      item.controlButton.paused = true;
+      item.controlButton.update();
+      item.seekBar.setProgress( 0 );
+    };
 
-			item.removeChild( item.controlButton );
-			item.removeChild( item.seekBar );
+    item.controlButton = this.createVideoControlButton();
+    item.seekBar = this.createVideoControlSeekbar();
 
-			item.controlButton.dispose();
-			item.controlButton = null;
+    item.appendChild( item.controlButton );
+    item.appendChild( item.seekBar );
 
-			item.seekBar.dispose();
-			item.seekBar = null;
+    item.dispose = function () {
 
-		};
+      item.removeChild( item.controlButton );
+      item.removeChild( item.seekBar );
 
-		this.addEventListener( 'video-control-show', item.show );
-		this.addEventListener( 'video-control-hide', item.hide );
+      item.controlButton.dispose();
+      item.controlButton = null;
 
-		return item;
+      item.seekBar.dispose();
+      item.seekBar = null;
 
-	};
+    };
 
-	/**
-	 * Create video control button
-	 * @return {HTMLSpanElement} - The dom element icon for video control
-	 * @fires PANOLENS.Widget#panolens-viewer-handler
-	 */
-	PANOLENS.Widget.prototype.createVideoControlButton = function () {
+    this.addEventListener( 'video-control-show', item.show );
+    this.addEventListener( 'video-control-hide', item.hide );
 
-		var scope = this, item;
+    return item;
 
-		function onTap () {
+  };
 
-			/**
-			 * Viewer handler event
-			 * @type {object}
-			 * @property {string} method - 'toggleVideoPlay' function call on PANOLENS.Viewer
-			 */
-			scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleVideoPlay', data: !this.paused } );
+  /**
+   * Create video control button
+   * @return {HTMLSpanElement} - The dom element icon for video control
+   * @fires PANOLENS.Widget#panolens-viewer-handler
+   */
+  PANOLENS.Widget.prototype.createVideoControlButton = function () {
 
-			this.paused = !this.paused;
+    var scope = this, item;
 
-			item.update();
+    function onTap () {
 
-		};
+      /**
+       * Viewer handler event
+       * @type {object}
+       * @property {string} method - 'toggleVideoPlay' function call on PANOLENS.Viewer
+       */
+      scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'toggleVideoPlay', data: !this.paused } );
 
-		item = this.createCustomItem( { 
+      this.paused = !this.paused;
 
-			style : { 
+      item.update();
 
-				float : 'left',
-				backgroundImage : 'url("' + PANOLENS.DataImage.VideoPlay + '")'
+    };
 
-			},
+    item = this.createCustomItem( {
 
-			onTap : onTap
+      style : {
 
-		} );
+        float : 'left',
+        backgroundImage : 'url("' + PANOLENS.DataImage.VideoPlay + '")'
 
-		item.paused = true;
+      },
 
-		item.update = function () {
+      onTap : onTap
 
-			this.style.backgroundImage = 'url("' + ( this.paused 
-				? PANOLENS.DataImage.VideoPlay 
-				: PANOLENS.DataImage.VideoPause ) + '")';
+    } );
 
-		};
+    item.paused = true;
 
-		return item;
+    item.update = function () {
 
-	};
+      this.style.backgroundImage = 'url("' + ( this.paused
+        ? PANOLENS.DataImage.VideoPlay
+        : PANOLENS.DataImage.VideoPause ) + '")';
 
-	/**
-	 * Create video seekbar
-	 * @return {HTMLSpanElement} - The dom element icon for video seekbar
-	 * @fires PANOLENS.Widget#panolens-viewer-handler
-	 */
-	PANOLENS.Widget.prototype.createVideoControlSeekbar = function () {
+    };
 
-		var scope = this, item, progressElement, progressElementControl,
-			isDragging = false, mouseX, percentageNow, percentageNext;
+    return item;
 
-		progressElement = document.createElement( 'div' );
-		progressElement.style.width = '0%';
-		progressElement.style.height = '100%';
-		progressElement.style.backgroundColor = '#fff';
+  };
 
-		progressElementControl = document.createElement( 'div' );
-		progressElementControl.style.float = 'right';
-		progressElementControl.style.width = '14px';
-		progressElementControl.style.height = '14px';
-		progressElementControl.style.transform = 'translate(7px, -5px)';
-		progressElementControl.style.borderRadius = '50%';
-		progressElementControl.style.backgroundColor = '#ddd';
+  /**
+   * Create video seekbar
+   * @return {HTMLSpanElement} - The dom element icon for video seekbar
+   * @fires PANOLENS.Widget#panolens-viewer-handler
+   */
+  PANOLENS.Widget.prototype.createVideoControlSeekbar = function () {
 
-		progressElementControl.addEventListener( 'mousedown', onMouseDown, false );
-		progressElementControl.addEventListener( 'touchstart', onMouseDown, false );
+    var scope = this, item, progressElement, progressElementControl,
+      isDragging = false, mouseX, percentageNow, percentageNext;
 
-		function onMouseDown ( event ) {
+    progressElement = document.createElement( 'div' );
+    progressElement.style.width = '0%';
+    progressElement.style.height = '100%';
+    progressElement.style.backgroundColor = '#fff';
 
-			event.stopPropagation();
-			
-			isDragging = true;
-			
-			mouseX = event.clientX || ( event.changedTouches && event.changedTouches[0].clientX );
+    progressElementControl = document.createElement( 'div' );
+    progressElementControl.style.float = 'right';
+    progressElementControl.style.width = '14px';
+    progressElementControl.style.height = '14px';
+    progressElementControl.style.transform = 'translate(7px, -5px)';
+    progressElementControl.style.borderRadius = '50%';
+    progressElementControl.style.backgroundColor = '#ddd';
 
-			percentageNow = parseInt( progressElement.style.width ) / 100;
+    progressElementControl.addEventListener( 'mousedown', onMouseDown, false );
+    progressElementControl.addEventListener( 'touchstart', onMouseDown, false );
 
-			addControlListeners();
-		}
+    function onMouseDown ( event ) {
 
-		function onVideoControlDrag ( event ) {
+      event.stopPropagation();
 
-			var clientX;
+      isDragging = true;
 
-			if( isDragging ){
+      mouseX = event.clientX || ( event.changedTouches && event.changedTouches[0].clientX );
 
-				clientX = event.clientX || ( event.changedTouches && event.changedTouches[0].clientX );
-				
-				percentageNext = ( clientX - mouseX ) / item.clientWidth;
+      percentageNow = parseInt( progressElement.style.width ) / 100;
 
-				percentageNext = percentageNow + percentageNext;
+      addControlListeners();
+    }
 
-				percentageNext = percentageNext > 1 ? 1 : ( ( percentageNext < 0 ) ? 0 : percentageNext );
+    function onVideoControlDrag ( event ) {
 
-				item.setProgress ( percentageNext );
+      var clientX;
 
-				/**
-				 * Viewer handler event
-				 * @type {object}
-				 * @property {string} method - 'setVideoCurrentTime' function call on PANOLENS.Viewer
-				 * @property {number} data - Percentage of current video. Range from 0.0 to 1.0
-				 */
-				scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'setVideoCurrentTime', data: percentageNext } );
+      if( isDragging ){
 
-			}
+        clientX = event.clientX || ( event.changedTouches && event.changedTouches[0].clientX );
 
-		}
+        percentageNext = ( clientX - mouseX ) / item.clientWidth;
 
-		function onVideoControlStop ( event ) {
+        percentageNext = percentageNow + percentageNext;
 
-			event.stopPropagation();
+        percentageNext = percentageNext > 1 ? 1 : ( ( percentageNext < 0 ) ? 0 : percentageNext );
 
-			isDragging = false;
+        item.setProgress ( percentageNext );
 
-			removeControlListeners();
+        /**
+         * Viewer handler event
+         * @type {object}
+         * @property {string} method - 'setVideoCurrentTime' function call on PANOLENS.Viewer
+         * @property {number} data - Percentage of current video. Range from 0.0 to 1.0
+         */
+        scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'setVideoCurrentTime', data: percentageNext } );
 
-		}
+      }
 
-		function addControlListeners () {
+    }
 
-			scope.container.addEventListener( 'mousemove', onVideoControlDrag, false );
-			scope.container.addEventListener( 'mouseup', onVideoControlStop, false );
-			scope.container.addEventListener( 'touchmove', onVideoControlDrag, false );
-			scope.container.addEventListener( 'touchend', onVideoControlStop, false );
+    function onVideoControlStop ( event ) {
 
+      event.stopPropagation();
 
-		}
+      isDragging = false;
 
-		function removeControlListeners () {
+      removeControlListeners();
 
-			scope.container.removeEventListener( 'mousemove', onVideoControlDrag, false );
-			scope.container.removeEventListener( 'mouseup', onVideoControlStop, false );
-			scope.container.removeEventListener( 'touchmove', onVideoControlDrag, false );
-			scope.container.removeEventListener( 'touchend', onVideoControlStop, false );
+    }
 
-		}
+    function addControlListeners () {
 
-		function onTap ( event ) {
+      scope.container.addEventListener( 'mousemove', onVideoControlDrag, false );
+      scope.container.addEventListener( 'mouseup', onVideoControlStop, false );
+      scope.container.addEventListener( 'touchmove', onVideoControlDrag, false );
+      scope.container.addEventListener( 'touchend', onVideoControlStop, false );
 
-			var percentage;
 
-			if ( event.target === progressElementControl ) { return; }
+    }
 
-			percentage = ( event.changedTouches && event.changedTouches.length > 0 )
-				? ( event.changedTouches[0].pageX - event.target.getBoundingClientRect().left ) / this.clientWidth
-				: event.offsetX / this.clientWidth;
+    function removeControlListeners () {
 
-			/**
-			 * Viewer handler event
-			 * @type {object}
-			 * @property {string} method - 'setVideoCurrentTime' function call on PANOLENS.Viewer
-			 * @property {number} data - Percentage of current video. Range from 0.0 to 1.0
-			 */
-			scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'setVideoCurrentTime', data: percentage } );
+      scope.container.removeEventListener( 'mousemove', onVideoControlDrag, false );
+      scope.container.removeEventListener( 'mouseup', onVideoControlStop, false );
+      scope.container.removeEventListener( 'touchmove', onVideoControlDrag, false );
+      scope.container.removeEventListener( 'touchend', onVideoControlStop, false );
 
-			item.setProgress( event.offsetX / this.clientWidth );
+    }
 
-		};
+    function onTap ( event ) {
 
-		function onDispose () {
+      var percentage;
 
-			removeControlListeners();
-			progressElement = null;
-			progressElementControl = null;
+      if ( event.target === progressElementControl ) { return; }
 
-		}
+      percentage = ( event.changedTouches && event.changedTouches.length > 0 )
+        ? ( event.changedTouches[0].pageX - event.target.getBoundingClientRect().left ) / this.clientWidth
+        : event.offsetX / this.clientWidth;
 
-		progressElement.appendChild( progressElementControl );
+      /**
+       * Viewer handler event
+       * @type {object}
+       * @property {string} method - 'setVideoCurrentTime' function call on PANOLENS.Viewer
+       * @property {number} data - Percentage of current video. Range from 0.0 to 1.0
+       */
+      scope.dispatchEvent( { type: 'panolens-viewer-handler', method: 'setVideoCurrentTime', data: percentage } );
 
-		item = this.createCustomItem( {
+      item.setProgress( event.offsetX / this.clientWidth );
 
-			style : { 
+    };
 
-				float : 'left',
-				width : '30%',
-				height : '4px',
-				marginTop : '20px',
-				backgroundColor : 'rgba(188,188,188,0.8)'
+    function onDispose () {
 
-			},
+      removeControlListeners();
+      progressElement = null;
+      progressElementControl = null;
 
-			onTap : onTap,
-			onDispose: onDispose
+    }
 
-		} );
+    progressElement.appendChild( progressElementControl );
 
-		item.appendChild( progressElement );
+    item = this.createCustomItem( {
 
-		item.setProgress = function( percentage ) {
+      style : {
 
-			progressElement.style.width = percentage * 100 + '%';
+        float : 'left',
+        width : '30%',
+        height : '4px',
+        marginTop : '20px',
+        backgroundColor : 'rgba(188,188,188,0.8)'
 
-		};		
+      },
 
-		this.addEventListener( 'video-update', function ( event ) { 
+      onTap : onTap,
+      onDispose: onDispose
 
-			item.setProgress( event.percentage ); 
+    } );
 
-		} );
+    item.appendChild( progressElement );
 
-		return item;
+    item.setProgress = function( percentage ) {
 
-	};
+      progressElement.style.width = percentage * 100 + '%';
 
-	/**
-	 * Create custom item element
-	 * @return {HTMLSpanElement} - The dom element icon
-	 */
-	PANOLENS.Widget.prototype.createCustomItem = function ( options ) {
+    };
 
-		options = options || {};
+    this.addEventListener( 'video-update', function ( event ) {
 
-		var item = options.element || document.createElement( 'span' ),
-			touchEnabled = ( document.ontouchend === undefined ) ? false : true;
+      item.setProgress( event.percentage );
 
-		item.style.cursor = 'pointer';
-		item.style.float = 'right';
-		item.style.width = '44px';
-		item.style.height = '100%';
-		item.style.backgroundSize = '60%';
-		item.style.backgroundRepeat = 'no-repeat';
-		item.style.backgroundPosition = 'center';
-		item.style.webkitUserSelect = 
-		item.style.MozUserSelect = 
-		item.style.userSelect = 'none';
+    } );
 
-		// White glow on icon
-		item.addEventListener( touchEnabled ? 'touchstart' : 'mouseenter', function() {
-			item.style.filter = 
-			item.style.webkitFilter = 'drop-shadow(0 0 5px rgba(255,255,255,1))';
-		});
-		item.addEventListener( touchEnabled ? 'touchend' : 'mouseleave', function() {
-			item.style.filter = 
-			item.style.webkitFilter = '';
-		});
+    return item;
 
-		item = this.mergeStyleOptions( item, options.style );
+  };
 
-		if ( options.onTap ) {
+  /**
+   * Create custom item element
+   * @return {HTMLSpanElement} - The dom element icon
+   */
+  PANOLENS.Widget.prototype.createCustomItem = function ( options ) {
 
-			item.addEventListener( touchEnabled ? 'touchend' : 'click', options.onTap, true );
+    options = options || {};
 
-		}
+    var item = options.element || document.createElement( 'span' ),
+      touchEnabled = ( document.ontouchend === undefined ) ? false : true;
 
-		item.dispose = function () {
+    item.style.cursor = 'pointer';
+    item.style.float = 'right';
+    item.style.width = '44px';
+    item.style.height = '100%';
+    item.style.backgroundSize = '60%';
+    item.style.backgroundRepeat = 'no-repeat';
+    item.style.backgroundPosition = 'center';
+    item.style.webkitUserSelect =
+    item.style.MozUserSelect =
+    item.style.userSelect = 'none';
 
-			item.removeEventListener( touchEnabled ? 'touchend' : 'click', options.onTap, true );
+    // White glow on icon
+    item.addEventListener( touchEnabled ? 'touchstart' : 'mouseenter', function() {
+      item.style.filter =
+      item.style.webkitFilter = 'drop-shadow(0 0 5px rgba(255,255,255,1))';
+    });
+    item.addEventListener( touchEnabled ? 'touchend' : 'mouseleave', function() {
+      item.style.filter =
+      item.style.webkitFilter = '';
+    });
 
-			options.onDispose && options.onDispose();
+    item = this.mergeStyleOptions( item, options.style );
 
-		};
-		
-		return item;
+    if ( options.onTap ) {
 
-	};
+      item.addEventListener( touchEnabled ? 'touchend' : 'click', options.onTap, true );
 
-	/**
-	 * Merge item css style
-	 * @param  {HTMLDOMElement} element - The element to be merged with style
-	 * @param  {object} options - The style options
-	 * @return {HTMLDOMElement} - The same element with merged styles
-	 */
-	PANOLENS.Widget.prototype.mergeStyleOptions = function ( element, options ) {
+    }
 
-		options = options || {};
+    item.dispose = function () {
 
-		for ( var property in options ){
+      item.removeEventListener( touchEnabled ? 'touchend' : 'click', options.onTap, true );
 
-			if ( options.hasOwnProperty( property ) ) {
+      options.onDispose && options.onDispose();
 
-				element.style[ property ] = options[ property ];
+    };
 
-			}
+    return item;
 
-		}
+  };
 
-		return element;
+  /**
+   * Merge item css style
+   * @param  {HTMLDOMElement} element - The element to be merged with style
+   * @param  {object} options - The style options
+   * @return {HTMLDOMElement} - The same element with merged styles
+   */
+  PANOLENS.Widget.prototype.mergeStyleOptions = function ( element, options ) {
 
-	};
+    options = options || {};
 
-	/**
-	 * Dispose widgets by detaching dom elements from container
-	 */
-	PANOLENS.Widget.prototype.dispose = function () {
+    for ( var property in options ){
 
-		if ( this.barElement ) {
-			this.container.removeChild( this.barElement );
-			this.barElement.dispose();
-			this.barElement = null;
+      if ( options.hasOwnProperty( property ) ) {
 
-		}
+        element.style[ property ] = options[ property ];
 
-	};
+      }
+
+    }
+
+    return element;
+
+  };
+
+  /**
+   * Dispose widgets by detaching dom elements from container
+   */
+  PANOLENS.Widget.prototype.dispose = function () {
+
+    if ( this.barElement ) {
+      this.container.removeChild( this.barElement );
+      this.barElement.dispose();
+      this.barElement = null;
+
+    }
+
+  };
 
 })();

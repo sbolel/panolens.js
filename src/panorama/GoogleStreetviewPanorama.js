@@ -1,125 +1,125 @@
 (function(){
 
-	'use strict';
-	
-	/**
-	 * Google streetview panorama
-	 * 
-	 * [How to get Panorama ID]{@link http://stackoverflow.com/questions/29916149/google-maps-streetview-how-to-get-panorama-id}
-	 * @constructor
-	 * @param {string} panoId - Panorama id from Google Streetview 
-	 * @param {number} [radius=5000] - The minimum radius for this panoram
-	 */
-	PANOLENS.GoogleStreetviewPanorama = function ( panoId, radius ) {
+  'use strict';
 
-		PANOLENS.ImagePanorama.call( this, undefined, radius );
+  /**
+   * Google streetview panorama
+   *
+   * [How to get Panorama ID]{@link http://stackoverflow.com/questions/29916149/google-maps-streetview-how-to-get-panorama-id}
+   * @constructor
+   * @param {string} panoId - Panorama id from Google Streetview
+   * @param {number} [radius=5000] - The minimum radius for this panoram
+   */
+  PANOLENS.GoogleStreetviewPanorama = function ( panoId, radius ) {
 
-		this.panoId = panoId;
+    PANOLENS.ImagePanorama.call( this, undefined, radius );
 
-		this.gsvLoader = undefined;
+    this.panoId = panoId;
 
-		this.setupGoogleMapAPI();
+    this.gsvLoader = undefined;
 
-	}
+    this.setupGoogleMapAPI();
 
-	PANOLENS.GoogleStreetviewPanorama.prototype = Object.create( PANOLENS.ImagePanorama.prototype );
+  }
 
-	PANOLENS.GoogleStreetviewPanorama.constructor = PANOLENS.GoogleStreetviewPanorama;
+  PANOLENS.GoogleStreetviewPanorama.prototype = Object.create( PANOLENS.ImagePanorama.prototype );
 
-	/**
-	 * Load Google Street View by panorama id
-	 * @param {string} panoId - Gogogle Street View panorama id
-	 */
-	PANOLENS.GoogleStreetviewPanorama.prototype.load = function ( panoId ) {
+  PANOLENS.GoogleStreetviewPanorama.constructor = PANOLENS.GoogleStreetviewPanorama;
 
-		panoId = ( panoId || this.panoId ) || {};
+  /**
+   * Load Google Street View by panorama id
+   * @param {string} panoId - Gogogle Street View panorama id
+   */
+  PANOLENS.GoogleStreetviewPanorama.prototype.load = function ( panoId ) {
 
-		if ( panoId && this.gsvLoader ) {
+    panoId = ( panoId || this.panoId ) || {};
 
-			this.loadGSVLoader( panoId );
+    if ( panoId && this.gsvLoader ) {
 
-		} else {
+      this.loadGSVLoader( panoId );
 
-			this.gsvLoader = {};
+    } else {
 
-		}
+      this.gsvLoader = {};
 
-	};
+    }
 
-	/**
-	 * Setup Google Map API
-	 */
-	PANOLENS.GoogleStreetviewPanorama.prototype.setupGoogleMapAPI = function () {
+  };
 
-		var script = document.createElement( 'script' );
-		script.src = 'https://maps.googleapis.com/maps/api/js';
-		script.onreadystatechange = this.setGSVLoader.bind( this );
-    	script.onload = this.setGSVLoader.bind( this );
+  /**
+   * Setup Google Map API
+   */
+  PANOLENS.GoogleStreetviewPanorama.prototype.setupGoogleMapAPI = function () {
 
-		document.getElementsByTagName('head')[0].appendChild( script );
+    var script = document.createElement( 'script' );
+    script.src = 'https://maps.googleapis.com/maps/api/js';
+    script.onreadystatechange = this.setGSVLoader.bind( this );
+      script.onload = this.setGSVLoader.bind( this );
 
-	};
+    document.getElementsByTagName('head')[0].appendChild( script );
 
-	/**
-	 * Set GSV Loader
-	 */
-	PANOLENS.GoogleStreetviewPanorama.prototype.setGSVLoader = function () {
+  };
 
-		this.gsvLoader = new GSVPANO.PanoLoader();
+  /**
+   * Set GSV Loader
+   */
+  PANOLENS.GoogleStreetviewPanorama.prototype.setGSVLoader = function () {
 
-		if ( this.gsvLoader === {} ) {
+    this.gsvLoader = new GSVPANO.PanoLoader();
 
-			this.load();
+    if ( this.gsvLoader === {} ) {
 
-		}
+      this.load();
 
-	};
+    }
 
-	/**
-	 * Get GSV Loader
-	 * @return {object} GSV Loader instance
-	 */
-	PANOLENS.GoogleStreetviewPanorama.prototype.getGSVLoader = function () {
+  };
 
-		return this.gsvLoader;
+  /**
+   * Get GSV Loader
+   * @return {object} GSV Loader instance
+   */
+  PANOLENS.GoogleStreetviewPanorama.prototype.getGSVLoader = function () {
 
-	};
+    return this.gsvLoader;
 
-	/**
-	 * Load GSV Loader
-	 * @param  {string} panoId - Gogogle Street View panorama id
-	 */
-	PANOLENS.GoogleStreetviewPanorama.prototype.loadGSVLoader = function ( panoId ) {
+  };
 
-		this.gsvLoader.onProgress = this.onProgress.bind( this );
+  /**
+   * Load GSV Loader
+   * @param  {string} panoId - Gogogle Street View panorama id
+   */
+  PANOLENS.GoogleStreetviewPanorama.prototype.loadGSVLoader = function ( panoId ) {
 
-		this.gsvLoader.onPanoramaLoad = this.onLoad.bind( this );
+    this.gsvLoader.onProgress = this.onProgress.bind( this );
 
-		this.gsvLoader.setZoom( this.getZoomLevel() );
+    this.gsvLoader.onPanoramaLoad = this.onLoad.bind( this );
 
-		this.gsvLoader.load( panoId );
+    this.gsvLoader.setZoom( this.getZoomLevel() );
 
-		this.gsvLoader.loaded = true;
-	};
+    this.gsvLoader.load( panoId );
 
-	/**
-	 * This will be called when panorama is loaded
-	 * @param  {HTMLCanvasElement} canvas - Canvas where the tiles have been drawn
-	 */
-	PANOLENS.GoogleStreetviewPanorama.prototype.onLoad = function ( canvas ) {
+    this.gsvLoader.loaded = true;
+  };
 
-		if ( !this.gsvLoader ) { return; }
+  /**
+   * This will be called when panorama is loaded
+   * @param  {HTMLCanvasElement} canvas - Canvas where the tiles have been drawn
+   */
+  PANOLENS.GoogleStreetviewPanorama.prototype.onLoad = function ( canvas ) {
 
-		PANOLENS.ImagePanorama.prototype.onLoad.call( this, new THREE.Texture( canvas ) );
+    if ( !this.gsvLoader ) { return; }
 
-	};
+    PANOLENS.ImagePanorama.prototype.onLoad.call( this, new THREE.Texture( canvas ) );
 
-	PANOLENS.GoogleStreetviewPanorama.prototype.reset = function () {
+  };
 
-		this.gsvLoader = undefined;
+  PANOLENS.GoogleStreetviewPanorama.prototype.reset = function () {
 
-		PANOLENS.ImagePanorama.prototype.reset.call( this );
+    this.gsvLoader = undefined;
 
-	};
+    PANOLENS.ImagePanorama.prototype.reset.call( this );
+
+  };
 
 })();

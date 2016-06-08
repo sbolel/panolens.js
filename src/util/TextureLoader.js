@@ -1,37 +1,37 @@
 (function(){
-	
-	'use strict';
 
-	/**
-	 * Texture loader based on {@link https://github.com/mrdoob/three.js/blob/master/src/loaders/TextureLoader.js}
-	 * @memberOf PANOLENS.Utils
-	 * @namespace
-	 */
-	PANOLENS.Utils.TextureLoader = {};
+  'use strict';
 
-	/**
-	 * Load image texture
-	 * @param  {string}   url        - An image url
-	 * @param  {function} onLoad     - On load callback
-	 * @param  {function} onProgress - In progress callback
-	 * @param  {function} onError    - On error callback
-	 * @return {THREE.Texture}   	 - Image texture
-	 */
-	PANOLENS.Utils.TextureLoader.load = function ( url, onLoad, onProgress, onError ) {
+  /**
+   * Texture loader based on {@link https://github.com/mrdoob/three.js/blob/master/src/loaders/TextureLoader.js}
+   * @memberOf PANOLENS.Utils
+   * @namespace
+   */
+  PANOLENS.Utils.TextureLoader = {};
 
-		var texture = new THREE.Texture(); 
+  /**
+   * Load image texture
+   * @param  {string}   url        - An image url
+   * @param  {function} onLoad     - On load callback
+   * @param  {function} onProgress - In progress callback
+   * @param  {function} onError    - On error callback
+   * @return {THREE.Texture}      - Image texture
+   */
+  PANOLENS.Utils.TextureLoader.load = function ( url, onLoad, onProgress, onError ) {
 
-		PANOLENS.Utils.ImageLoader.load( url, function ( image ) {
+    var texture = new THREE.Texture();
 
-			texture.image = image;
-			texture.needsUpdate = true;
+    PANOLENS.Utils.ImageLoader.load( url, function ( image ) {
 
-			onLoad && onLoad( texture );
+      texture.image = image;
+      texture.needsUpdate = true;
 
-		}, onProgress, onError );
+      onLoad && onLoad( texture );
 
-		return texture;
+    }, onProgress, onError );
 
-	};
+    return texture;
+
+  };
 
 })();
