@@ -1,40 +1,39 @@
 # [Panolens.js][pchen66/about]
 
-[pchen66]: https://pchen66.github.io
-[pchen66/about]: https://pchen66.github.io/Panolens
-[pchen66/demo]: https://github.com/pchen66/pchen66.github.io/blob/master/Panolens/images/panolens.gif?raw=true
-[pchen66/docs]: https://pchen66.github.io/Panolens/docs/index.html
-[pchen66/examples]: https://pchen66.github.io/Panolens/#Example
-
-[sbolel/pano]: https://github.com/sbolel/pano
-
-[jquery]: https://github.com/jquery/jquery
-[threejs]: https://github.com/mrdoob/three.js
-[panolensjs]: https://github.com/sbolel/panolens.js
-
 ##### Fork of [`Panolens.js`][pchen66/about] by [**pchen66**][pchen66]
 
-Panolens.js is an event-driven and WebGL based panorama viewer built on top of [Three.JS][threejs]. 
+Panolens.js is an event-driven and WebGL based panorama viewer built on top of [Three.JS][three]. 
 
 ![Panorama Demo][pchen66/demo]
 
-## Installation
+## Getting Started
 
-Using npm:
+The npm package does not have any dependencies. [Three.js][three] and [Tween.js][tween] are included in `panolens.min.js` and `panolens.min.js`.
+
+##### Installing with `npm`
 
     npm install --save panolens
 
-Building from source:
+
+##### Building from source
+
+Clone this project:
 
     git clone git@github.com:sbolel/panolens.js.git
-    cd ./panolens
+
+`cd` into the project directory:
+
+    cd ./panolens.js
+
+Run npm build script (which runs `gulp build`):
+
     npm run build
 
-## Usage
+[Three.js][three] and [Tween.js][tween] will be included by default when building the package with Gulp.
 
 #### Attaching a single Panolens viewer to the document `<body>`
 
-Include [`three.min.js`][threejs] and [`panolens.min.js`](dist/panolens.min.js)
+Include [`three.min.js`][three] and [`panolens.min.js`](dist/panolens.min.js)
 
 ```html
 <script src="js/three.min.js"></script>
@@ -79,7 +78,7 @@ All attributes of the configuration object are optional:
 ```
 
 
-#### How to add an infospot (hotspot)
+#### Adding an `infospot` (hotspot)
 
 Move cursor on a specific point in a panorama and press `Ctrl` with mouse clicking or hovering, which will generate position (x, y, z) in the console. See [Panorama Infospot](http://pchen66.github.io/Panolens/examples/panorama_infospot.html) example for creating and attaching infospots.
 
@@ -87,7 +86,7 @@ Move cursor on a specific point in a panorama and press `Ctrl` with mouse clicki
 
 ## Examples
 
-Check Panolens [examples page][pchen66/examples]
+Check pchen66's Panolens [examples page][pchen66/examples]
 
 ## Features
 
@@ -99,12 +98,22 @@ Check Panolens [examples page][pchen66/examples]
 * Built-in Orbit / DeviceOrientation camera controls
 * Built-in fullscreen and video control widgets
 
-## Dependency
-
-Panolens.js includes [Tween.js][tween] by default
-
-## Future
+## Backlog
 
 * ES6
 * Add dwell animation
 * Add AR capability
+
+<!-- LINKS -->
+
+[sbolel/pano]: https://github.com/sbolel/pano
+
+[jquery]: https://github.com/jquery/jquery
+[three]: https://www.npmjs.com/package/three
+[tweenjs]: https://npmjs.org/package/tween.js
+
+[pchen66]: https://pchen66.github.io
+[pchen66/about]: https://pchen66.github.io/Panolens
+[pchen66/demo]: https://github.com/pchen66/pchen66.github.io/blob/master/Panolens/images/panolens.gif?raw=true
+[pchen66/docs]: https://pchen66.github.io/Panolens/docs/index.html
+[pchen66/examples]: https://pchen66.github.io/Panolens/#Example

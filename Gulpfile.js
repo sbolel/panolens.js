@@ -4,6 +4,7 @@ const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 
 const libFiles = [
+  'node_modules/three/build/three.js',
   'node_modules/tween.js/src/Tween.js',
   'src/lib/controls/OrbitControls.js',
   'src/lib/controls/DeviceOrientationControls.js',
@@ -59,11 +60,11 @@ gulp.task('docs', () => {
 gulp.task('minify', () => {
   return gulp.src(libFiles.concat(panolensFiles))
     .pipe(concat('panolens.js', { newLine: ';' }))
-    .pipe(gulp.dest('./dist/'))
+    .pipe(gulp.dest('./'))
     .pipe(concat('panolens.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('./dist/'));
+    .pipe(gulp.dest('./'));
 });
 
-gulp.task('build', ['minify', 'docs']);
+gulp.task('build', ['minify']);
 gulp.task('default', ['build']);
