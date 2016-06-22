@@ -1,4 +1,10 @@
 /**
+ * @author pchen66
+ * @namespace PANOLENS
+ */
+
+window.PANOLENS = {};
+;/**
  * Tween.js - Licensed under the MIT license
  * https://github.com/tweenjs/tween.js
  * ----------------------------------------------
@@ -2318,13 +2324,7 @@ GSVPANO.PanoLoader = function (parameters) {
 
 	this.setZoom( _parameters.zoom || 1 );
 
-};;/**
- * @author pchen66
- * @namespace PANOLENS
- */
-
-window.PANOLENS = {};
-;(function(){
+};;(function(){
 
 	'use strict';
 
