@@ -1,6 +1,6 @@
 {
   "name": "panolens.js",
-  "version": "1.0.1",
+  "version": "1.0.1-beta",
   "main": "dist/panolens.min.js",
   "description": "JavaScript panorama viewer using Three.js",
   "scripts": {
