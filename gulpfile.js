@@ -6,11 +6,12 @@ const uglify = require('gulp-uglify')
 const _libfiles = [
   'node_modules/iphone-inline-video/dist/iphone-inline-video.min.js',
   'node_modules/tween.js/src/Tween.js',
+  'node_modules/three/build/three.js',
+  'node_modules/three/examples/js/effects/StereoEffect.js',
   'src/lib/controls/OrbitControls.js',
   'src/lib/controls/DeviceOrientationControls.js',
   'src/lib/modifier/BendModifier.js',
   'src/lib/effects/CardboardEffect.js',
-  'node_modules/three/examples/js/effects/StereoEffect.js',
   'src/lib/GSVPano.js'
 ]
 
@@ -60,18 +61,17 @@ const _sources = _panolensfiles.slice(0, 1)
   .concat(_libfiles)
   .concat(_panolensfiles.slice(1))
 
-gulp.task('default', ['minify', 'docs'])
+gulp.task('default', ['build', 'docs'])
 
-gulp.task('minify', function() {
-  return gulp.src(_sources)
-    .pipe(concat('panolens.js', { newLine: '' }))
-    .pipe(gulp.dest('./build/'))
-    .pipe(concat('panolens.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('./build/'))
-})
+gulp.task('build', () => gulp
+  .src(_sources)
+  .pipe(concat('panolens.js', { newLine: ';' }))
+  .pipe(gulp.dest('./dist'))
+  .pipe(concat('panolens.min.js'))
+  .pipe(uglify())
+  .pipe(gulp.dest('./dist'))
+)
 
-gulp.task('docs', function() {
-  return gulp.src(_panolensfiles.concat(_readme), {read: false})
-  .pipe(jsdoc(jsdocConfig))
-})
+gulp.task('docs', () => gulp
+  .src(_panolensfiles.concat(_readme), {read: false})
+  .pipe(jsdoc(jsdocConfig)))
