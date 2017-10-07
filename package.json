@@ -1,6 +1,6 @@
 {
   "name": "panolens.js",
-  "version": "1.0.1-beta",
+  "version": "0.0.0",
   "main": "dist/panolens.min.js",
   "description": "JavaScript panorama viewer using Three.js",
   "scripts": {
@@ -67,5 +67,6 @@
   },
   "scripts": {
     "build": "gulp build"
-  }
+  },
+  "deprecated": "this package has been deprecated in favor of github.com/pchen66/panolens.js"
 }
