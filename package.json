@@ -108,7 +108,7 @@
     "@tweenjs/tween.js": "^17.4.0",
     "ava": "^7.0.0",
     "browser-env": "^3.2.6",
-    "concurrently": "^4.1.0",
+    "concurrently": "^9.2.1",
     "coveralls": "^3.0.4",
     "docdash": "^1.1.1",
     "eslint": "^10.2.1",
